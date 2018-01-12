@@ -1,5 +1,45 @@
+body {
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size: 14px;
+  line-height: 1.42857143;
+  color: #333;
+  background-color: #fff;
+}
 h1, h2, h3, h4, h5, h6 {
   font-family: "Segoe UI",Arial,sans-serif;
   font-weight: 400;
   margin: 10px 0;
+}
+table, th {
+  text-align: center !important;  
+}
+table {
+  border:1px solid #ccc;
+}
+tr{
+  cursor: pointer;
+}
+.page-title {
+  text-align: center;
+  padding-bottom: 20px;
+}
+
+.filter-condition{
+  margin-left: 15px;
+}
+.filter-condition-arrow{
+  float: right;
+  cursor: pointer;
+}
+
+.database-table {
+  overflow-x: auto;
+}
+
+.clear {
+  display: none !important;
+}
+
+.v-select .selected-tag {
+  margin-left: 6px !important;
 }
