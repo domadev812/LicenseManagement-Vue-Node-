@@ -28,7 +28,7 @@
                   label="Issue Date:"
                   label-class="text-sm-right"
                   label-for="detailIssueDate">
-                  <b-form-input id="detailIssueDate"></b-form-input>
+                  <b-form-input id="detailIssueDate" :type="'date'"></b-form-input>
                 </b-form-group>
               </div>
               <div class = "col-md-12">
@@ -36,7 +36,7 @@
                   label="Expiry Date:"
                   label-class="text-sm-right"
                   label-for="detailExpireDate">
-                  <b-form-input id="detailExpireDate"></b-form-input>
+                  <b-form-input id="detailExpireDate" :type="'date'"></b-form-input>
                 </b-form-group>
               </div>
               <div class = "col-md-12">
@@ -226,10 +226,13 @@ export default {
   name: 'ViewDetail',
   created() {
     // console.log(this.$route.params.id);
+    this.jsonTest.id = "ID";
+    this.jsonTest.name = "Name";
+    console.log(this.jsonTest);
   },
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App',
+      jsonTest: {},
       selectedType: 'Enterprise',
       licenseType: [
         { value: 'Enterprise', text: 'Enterprise' },
