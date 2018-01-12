@@ -24,14 +24,14 @@
                 </b-form-select>
               </div>
           </div>
-          <div class="filter-footer"><button type="button" class="btn btn-primary btn-filter">Filter</button></div>
+          <div class="filter-footer"><button type="button" class="btn btn-success btn-filter">Filter</button></div>
         </b-collapse>
       </div>      
     </div>
     <div class = "database-table">
       <table class="table table-striped table-hover">
         <thead>
-          <tr style = "background: #b7b5b5;">
+          <tr style = "background: rgb(114, 202, 95);color: white;font-size: 16px;">
             <th>Name</th>
             <th>Email</th>
             <th>Company</th>
@@ -69,13 +69,13 @@ export default {
   data () {
     return {
       msg: 'Welcome to Your Vue.js App',
-      selectedProduct: 'Bumblebee',
       totalRecords: 67,
       perPage: 10,
       totalPages: 1,
       currentPage: 0,
       startIndex: 0,
       endIndex: 0,
+      selectedProduct: 'Bumblebee',
       products: [
         { value: 'Bumblebee', text: 'Bumblebee' },
         { value: 'Eggplant-alm', text: 'Eggplant-alm' },

@@ -20,7 +20,7 @@
                   label="Company:"
                   label-class="text-sm-right"
                   label-for="detailCompany">
-                  <b-form-input id="detailCompany"></b-form-input>
+                  <b-form-input id="detailCompany" value = "Google"></b-form-input>
                 </b-form-group>
               </div>
               <div class = "col-md-12">
@@ -44,7 +44,8 @@
                   label="License Type:"
                   label-class="text-sm-right"
                   label-for="detailLicenseType">
-                  <b-form-input id="detailLicenseType"></b-form-input>
+                  <b-form-select id = "detailLicenseType" v-model="selectedType" :options="licenseType" class="mb-3">
+                  </b-form-select>
                 </b-form-group>
               </div>
               <div class = "col-md-12">
@@ -52,7 +53,8 @@
                   label="Product:"
                   label-class="text-sm-right"
                   label-for="detailProduct">
-                  <b-form-input id="detailProduct"></b-form-input>
+                  <b-form-select id = "detailProduct" v-model="selectedProduct" :options="products" class="mb-3">
+                  </b-form-select>
                 </b-form-group>
               </div>
             </div>
@@ -64,7 +66,7 @@
                   label="Contact Name:"
                   label-class="text-sm-right"
                   label-for="detailContactName">
-                  <b-form-input id="detailContactName"></b-form-input>
+                  <b-form-input id="detailContactName" value = "Bill Smith"></b-form-input>
                 </b-form-group>
               </div>
               <div class = "col-md-12">
@@ -72,7 +74,7 @@
                   label="Contact Email::"
                   label-class="text-sm-right"
                   label-for="detailContactEmail">
-                  <b-form-input id="detailContactEmail"></b-form-input>
+                  <b-form-input id="detailContactEmail" value = "bsmith@foo.com"></b-form-input>
                 </b-form-group>
               </div>
               <div class = "col-md-12">
@@ -80,7 +82,7 @@
                   label="License URL:"
                   label-class="text-sm-right"
                   label-for="detailLicenseURL">
-                  <b-form-input id="detailLicenseURL"></b-form-input>
+                  <b-form-input id="detailLicenseURL" value = "https://aws.com/s3/23423.14j"></b-form-input>
                 </b-form-group>
               </div>
               <div class = "col-md-12">
@@ -88,15 +90,15 @@
                   label="Freshsales URL:"
                   label-class="text-sm-right"
                   label-for="detailFreshsalesURL">
-                  <b-form-input id="detailFreshsalesURL"></b-form-input>
-                </b-form-group>
+                  <b-form-input id="detailFreshsalesURL" value = "https://freshsales.com/deals/23423.14j"></b-form-input>
+                  </b-form-group>
               </div>
               <div class = "col-md-12">
                  <b-form-group horizontal
                   label="Renew Status:"
                   label-class="text-sm-right"
                   label-for="detailRenew">
-                  <b-form-input id="detailRenew"></b-form-input>
+                  <b-form-input id="detailRenew" disabled v-model = "renewStatus"></b-form-input>
                 </b-form-group>
               </div>
               <div class = "col-md-12">
@@ -104,8 +106,8 @@
                   label=""
                   label-class="text-sm-right"
                   label-for="">
-                  <button type="button" class="btn btn-success btn-renew-license">Renew License</button>
-                  <button type="button" class="btn btn-success btn-unrenew-license ">un-renew License</button>
+                  <button type="button" class="btn btn-success btn-renew-license" @click="changeRenewStatus('Renewed')">Renew License</button>
+                  <button type="button" class="btn btn-success btn-unrenew-license" @click="changeRenewStatus('Unrenewed')">Un-renew License</button>
                 </b-form-group>
               </div class>
             </div>
@@ -138,15 +140,30 @@
       </div>
       <div class = "col-md-6 col-sm-6 col-xs-12 col-part-detail">
         <div class = "content-panel">
-          <div class = "row sub-title">Accounts Payable + Decision Makers Info</div>
-          <div class = "row detail-panel" style = "margin-bottom:10px;">          
-            <b-form-textarea id="textarea1"
-                      v-model="payableContent"
-                      placeholder="Enter something"
-                      :rows="3"
-                      :no-resize="true"
-                      :max-rows="3">
-            </b-form-textarea>          
+          <div class = "row sub-title">License Status</div>
+          <div class = "row detail-panel">          
+            <div class = "col-md-12">
+              <b-form-group horizontal
+                label="Status:"
+                label-class="text-sm-right"
+                label-for="detailLicenseStatus">
+                  <b-form-select id = "detailLicenseStatus" v-model="selectedLicenseStatus" :options="licenseStatus" class="mb-3">
+                  </b-form-select>
+              </b-form-group>
+            </div>
+            <div class = "col-md-12">
+              <b-form-group horizontal
+                label="State:"
+                label-class="text-sm-right"
+                label-for="detailLicenseState">
+                  <b-form-checkbox id="detailLicenseState"
+                      v-model="licenseState"
+                      value="accepted"
+                      unchecked-value="not_accepted">
+                      Archive
+                  </b-form-checkbox>
+              </b-form-group>
+            </div>          
           </div>
         </div>
       </div>      
@@ -210,15 +227,39 @@ export default {
   created() {
     // console.log(this.$route.params.id);
   },
-  methods: {
-    backToHome() {
-      
-    }
-  },
   data () {
     return {
       msg: 'Welcome to Your Vue.js App',
+      selectedType: 'Enterprise',
+      licenseType: [
+        { value: 'Enterprise', text: 'Enterprise' },
+        { value: 'Basic', text: 'Basic' }
+      ],
+      selectedLicenseStatus: 'TODO',
+      licenseStatus: [
+        { value: 'TODO', text: 'TODO' },
+        { value: 'Email Sent', text: 'Email Sent' },
+        { value: 'Multiple Emails', text: 'Multiple Emails' }
+      ],
+      selectedProduct: 'Bumblebee',
+      products: [
+        { value: 'Bumblebee', text: 'Bumblebee' },
+        { value: 'Eggplant-alm', text: 'Eggplant-alm' },
+        { value: 'Dragonfly', text: 'Dragonfly' },
+        { value: 'Firefly', text: 'Firefly' },
+        { value: 'Pangolin', text: 'Pangolin' }
+      ],
+      renewStatus: 'Renewed',
+      licenseState: 'not_accepted',
       payableContent: ''
+    }
+  },
+  methods: {
+    backToHome() {
+      this.$router.go(-1);
+    },
+    changeRenewStatus(status) {
+      this.renewStatus = status;
     }
   }
 }
