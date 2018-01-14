@@ -28,7 +28,7 @@
                   label="Issue Date:"
                   label-class="text-sm-right"
                   label-for="detailIssueDate">
-                  <b-form-input id="detailIssueDate" :type="'date'"></b-form-input>
+                  <b-form-input id="detailIssueDate" :type="'date'" v-model="issueDate"></b-form-input>
                 </b-form-group>
               </div>
               <div class = "col-md-12">
@@ -36,7 +36,7 @@
                   label="Expiry Date:"
                   label-class="text-sm-right"
                   label-for="detailExpireDate">
-                  <b-form-input id="detailExpireDate" :type="'date'"></b-form-input>
+                  <b-form-input id="detailExpireDate" :type="'date'" v-model="expireDate"></b-form-input>
                 </b-form-group>
               </div>
               <div class = "col-md-12">
@@ -55,6 +55,14 @@
                   label-for="detailProduct">
                   <b-form-select id = "detailProduct" v-model="selectedProduct" :options="products" class="mb-3">
                   </b-form-select>
+                </b-form-group>
+              </div>
+              <div class = "col-md-12">
+                 <b-form-group horizontal
+                  label="License ID:"
+                  label-class="text-sm-right"
+                  label-for="detailLicenseID">
+                  <b-form-input id="detailLicenseID" value = "License ID"></b-form-input>
                 </b-form-group>
               </div>
             </div>
@@ -169,36 +177,12 @@
       </div>      
       <div class = "col-md-6 col-sm-6 col-xs-12 col-part-detail">
         <div class = "content-panel">
-          <div class = "row sub-title">Purchase Orders</div>
+          <div class = "row sub-title">Quotes</div>
           <div class = "row detail-panel">
             <div class = "col-md-12">12/1/17: In-4087.pdf</div>
             <div class = "col-md-12">12/1/17: In-4087.pdf</div>
             <button type="button" class="btn btn-success btn-small form-group">Add</button>
           </div>
-        </div>
-      </div>
-      <div class = "col-md-12 col-detail">
-        <div class = "row sub-title">Deal Notes</div>
-        <div class = "row detail-panel">          
-          <b-form-textarea id="textarea1" class = "form-group"
-                     v-model="payableContent"
-                     placeholder="Enter something"
-                     :rows="3"
-                     :no-resize="true"
-                     :max-rows="3">
-          </b-form-textarea>          
-        </div>
-      </div>
-      <div class = "col-md-12 col-detail">
-        <div class = "row sub-title">Raw License4j Data</div>
-        <div class = "row detail-panel">          
-          <b-form-textarea id="textarea1" class = "form-group"
-                     v-model="payableContent"
-                     placeholder="Enter something"
-                     :rows="3"
-                     :no-resize="true"
-                     :max-rows="3">
-          </b-form-textarea>          
         </div>
       </div>
       <div class = "col-md-12 col-detail">
@@ -221,7 +205,6 @@
   </div>  
 </template>
 <script>
-
 export default {
   name: 'ViewDetail',
   created() {
@@ -233,6 +216,8 @@ export default {
   data () {
     return {
       jsonTest: {},
+      issueDate: '2017-12-12',
+      expireDate: '2017-12-12',
       selectedType: 'Enterprise',
       licenseType: [
         { value: 'Enterprise', text: 'Enterprise' },

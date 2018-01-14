@@ -1,28 +1,41 @@
 <template>
-  <div class="container">
+  <div class="container-fluid">
     <h1 class = 'page-title'>License Database Records</h1>
     <div class="panel-group">
       <div class="panel panel-default">                
         <b-card v-b-toggle.collapse1 variant="primary" class = "filter-panel">Filter Options<i class="fa fa-angle-double-down filter-condition-arrow"></i></b-card >
         <b-collapse id="collapse1" class="filter-body">
           <div class = "row filter-row">
-            <div class = "col-md-3 col-sm-6 col-xs-12 form-group">
-                <label for="filterName">Name:</label>
-                <input type="text" class="form-control" id="filterName">
-              </div>
-              <div class = "col-md-3 col-sm-6 col-xs-12 form-group">
-                <label for="filterEmail">Email:</label>
-                <input type="text" class="form-control" id="filterEmail">
-              </div>
-              <div class = "col-md-3 col-sm-6 col-xs-12 form-group">
-                <label for="filterCompany">Company:</label>
-                <input type="text" class="form-control" id="filterCompany">
-              </div>
-              <div class = "col-md-3 col-sm-6 col-xs-12 form-group">
-                <label for="filterProduct">Product:</label>
-                <b-form-select v-model="selectedProduct" :options="products" class="mb-3">
+            <div class = "col-md-4 col-sm-6">
+                <b-form-group horizontal
+                label="Type:"
+                label-class="text-sm-right"
+                label-for="detailLicenseType">
+                <b-form-select id = "detailLicenseType" v-model="selectedType" :options="licenseType" class="mb-3">
                 </b-form-select>
-              </div>
+              </b-form-group>
+            </div>
+            <div class = "col-md-4 col-sm-6">
+              <b-form-group horizontal
+                label="Expiry Date:"
+                label-class="text-sm-right"
+                label-for="detailExpireDate">
+                <b-form-input id="detailExpireDate" :type="'date'" v-model="expireDate"></b-form-input>
+              </b-form-group>
+            </div>
+            <div class = "col-md-4 col-sm-6">
+              <b-form-group horizontal
+                label="State:"
+                label-class="text-sm-right"
+                label-for="detailLicenseState">
+                  <b-form-checkbox id="detailLicenseState"
+                      v-model="licenseState"
+                      value="accepted"
+                      unchecked-value="not_accepted">
+                      Archive
+                  </b-form-checkbox>
+              </b-form-group>
+            </div> 
           </div>
           <div class="filter-footer"><button type="button" class="btn btn-success btn-filter">Filter</button></div>
         </b-collapse>
@@ -32,19 +45,26 @@
       <table class="table table-striped table-hover">
         <thead>
           <tr style = "background: rgb(114, 202, 95);color: white;font-size: 16px;">
+            <th>ID</th>
             <th>Name</th>
             <th>Email</th>
             <th>Company</th>
             <th>Product</th>
+            <th>Issue Date</th>
+            <th>Expire Date</th>
+            <th>Status</th>
           </tr>
         </thead>
         <tbody>        
           <tr v-for="n in endIndex - startIndex + 1" @click="vieweDetail(n - 1)">
-            <!-- <td><router-link :to="{ name: 'Home', params: { id: 3 }}">John</router-link></td>             -->
+            <td>License ID</td>            
             <td>{{records[n + startIndex - 1].name}}</td>            
             <td>{{records[n + startIndex - 1].email}}</td>
             <td>{{records[n + startIndex - 1].company}}</td>            
             <td>{{records[n + startIndex - 1].product}}</td>            
+            <td>{{records[n + startIndex - 1].issueDate}}</td>            
+            <td>{{records[n + startIndex - 1].expireDate}}</td> 
+            <td>Email Sent</td>           
           </tr>          
            
         </tbody>
@@ -83,6 +103,13 @@ export default {
         { value: 'Firefly', text: 'Firefly' },
         { value: 'Pangolin', text: 'Pangolin' }
       ],
+      selectedType: 'Enterprise',
+      licenseType: [
+        { value: 'Enterprise', text: 'Enterprise' },
+        { value: 'Basic', text: 'Basic' }
+      ],
+      expireDate: '2017-12-12',
+      licenseState: 'not_accepted',
       records: []
     }
   },
@@ -90,9 +117,10 @@ export default {
     this.totalPages = Math.ceil(this.totalRecords / this.perPage);     
     this.currentPage = 1;
     for(let i = 0; i < this.totalRecords; i++) {
-      let item = {"name":"name" + i, "email":"email" + i, "product":this.products[i % 4].text, "company": "company" + i};
+      let item = {"name":"name" + i, "email":"email" + i, "product":this.products[i % 4].text, "company": "company" + i, "issueDate": "2017-12-09", "expireDate": "2018-09-09"};
       this.records.push(item);
     }
+    this.fetchNewRecords();
   },
   watch: {
       currentPage: {
@@ -109,6 +137,16 @@ export default {
   methods: {
     vieweDetail(index) {
       this.$router.push({name: 'ViewDetail', params: { id: index }})
+    },
+    fetchNewRecords: function () {   
+      this.$store.dispatch('fetchNewRecords')
+        .then((response) => {
+          this.$store.dispatch('setLoading', false);
+          console.log(response);
+        }).catch((error) => {
+          console.log("Error");          
+        }
+      )
     }
   }
 }
