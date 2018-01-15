@@ -6,36 +6,95 @@
         <b-card v-b-toggle.collapse1 variant="primary" class = "filter-panel">Filter Options<i class="fa fa-angle-double-down filter-condition-arrow"></i></b-card >
         <b-collapse id="collapse1" class="filter-body">
           <div class = "row filter-row">
-            <div class = "col-md-4 col-sm-6">
-                <b-form-group horizontal
-                label="Type:"
-                label-class="text-sm-right"
-                label-for="detailLicenseType">
-                <b-form-select id = "detailLicenseType" v-model="selectedType" :options="licenseType" class="mb-3">
-                </b-form-select>
-              </b-form-group>
-            </div>
-            <div class = "col-md-4 col-sm-6">
-              <b-form-group horizontal
-                label="Expiry Date:"
-                label-class="text-sm-right"
-                label-for="detailExpireDate">
-                <b-form-input id="detailExpireDate" :type="'date'" v-model="expireDate"></b-form-input>
-              </b-form-group>
-            </div>
-            <div class = "col-md-4 col-sm-6">
-              <b-form-group horizontal
-                label="State:"
-                label-class="text-sm-right"
-                label-for="detailLicenseState">
-                  <b-form-checkbox id="detailLicenseState"
-                      v-model="licenseState"
+            <div class = "col-md-3 col-sm-4">
+              <p>License Expiration Date Range </p>
+              <div class = "row">
+                <div class = "col-sm-6 col-md-6">
+                  <b-form-input id="startExpireDate" :type="'date'" v-model="startExpireDate"></b-form-input>                            
+                </div>                
+                <div class = "col-sm-6 col-md-6">
+                  <b-form-input id="endExpireDate" :type="'date'" v-model="endExpireDate"></b-form-input>              
+                </div>
+              </div>
+            </div> 
+            <div class = "col-md-7 col-sm-6">
+              <div class = "row">
+                <div class = "col-md-3 col-sm-6">
+                  <b-form-checkbox
+                      v-model="bumblebee"
                       value="accepted"
                       unchecked-value="not_accepted">
-                      Archive
+                      Bulblebee
                   </b-form-checkbox>
-              </b-form-group>
-            </div> 
+                  <b-form-checkbox
+                      v-model="eggplant"
+                      value="accepted"
+                      unchecked-value="not_accepted">
+                      Eggplant
+                  </b-form-checkbox>
+                  <b-form-checkbox
+                      v-model="dragonfly"
+                      value="accepted"
+                      unchecked-value="not_accepted">
+                      Dragonfly
+                  </b-form-checkbox>
+                  <b-form-checkbox
+                      v-model="firefly"
+                      value="accepted"
+                      unchecked-value="not_accepted">
+                      Firefly
+                  </b-form-checkbox>
+                  <b-form-checkbox
+                      v-model="pangolin"
+                      value="accepted"
+                      unchecked-value="not_accepted">
+                      Pangolin
+                  </b-form-checkbox>
+                </div>
+                <div class = "col-md-3 col-sm-6">
+                  <b-form-checkbox
+                      v-model="paid"
+                      value="accepted"
+                      unchecked-value="not_accepted">
+                      Paid
+                  </b-form-checkbox>
+                  <b-form-checkbox
+                      v-model="evaluation"
+                      value="accepted"
+                      unchecked-value="not_accepted">
+                      Evaluation
+                  </b-form-checkbox>
+                </div>
+                <div class = "col-md-3 col-sm-6">
+                  <b-form-checkbox
+                      v-model="basic"
+                      value="accepted"
+                      class = "license-type"
+                      unchecked-value="not_accepted">
+                      Basic
+                  </b-form-checkbox>
+                  <b-form-checkbox
+                      v-model="enterprise"
+                      class = "license-type"
+                      value="accepted"
+                      unchecked-value="not_accepted">
+                      Enterprise
+                  </b-form-checkbox>
+                </div>
+                <div class = "col-md-3 col-sm-6">
+                  <b-form-checkbox
+                      v-model="showArchived"
+                      value="accepted"
+                      unchecked-value="not_accepted">
+                      Show Archived
+                  </b-form-checkbox>
+                </div>
+              </div>
+            </div>
+            <div class = "col-md-1 col-sm-2">
+              <b-form-select id = "detailCustomStatus" v-model="selectedCustomStatus" :options="customStatus">
+              </b-form-select>
+            </div>                      
           </div>
           <div class="filter-footer"><button type="button" class="btn btn-success btn-filter">Filter</button></div>
         </b-collapse>
@@ -102,21 +161,25 @@ export default {
       currentPage: 1,
       startIndex: 0,
       endIndex: 0,
-      selectedProduct: 'Bumblebee',
-      products: [
-        { value: 'Bumblebee', text: 'Bumblebee' },
-        { value: 'Eggplant-alm', text: 'Eggplant-alm' },
-        { value: 'Dragonfly', text: 'Dragonfly' },
-        { value: 'Firefly', text: 'Firefly' },
-        { value: 'Pangolin', text: 'Pangolin' }
-      ],
-      selectedType: 'Enterprise',
-      licenseType: [
-        { value: 'Enterprise', text: 'Enterprise' },
-        { value: 'Basic', text: 'Basic' }
-      ],
-      expireDate: '2017-12-12',
-      licenseState: 'not_accepted',
+      startExpireDate: '2018-01-01',
+      endExpireDate: '2018-01-01',
+      bumblebee: 'accepted',      
+      eggplant: 'accepted',
+      dragonfly: 'accepted',      
+      firefly: 'accepted',      
+      pangolin: 'accepted', 
+      paid: 'accepted',
+      evaluation: 'accepted',  
+      basic: 'accepted',
+      enterprise: 'accepted',
+      showArchived: 'not_accepted',      
+      selectedCustomStatus: '',
+      customStatus: [
+        { value: '', text: 'All' },
+        { value: 'new', text: 'New' },
+        { value: 'renewal', text: 'Renewal' },
+        { value: 'lost', text: 'Lost' }
+      ],               
       records: []
     }
   },

@@ -121,7 +121,7 @@ tr{
   margin: 20px 0;
   padding: 0px 20px;  
 }
-.detail-panel .custom-checkbox {
+.custom-checkbox {
   margin-top: 6px;
 }
 .form-group {
@@ -177,5 +177,9 @@ tr{
 .btn-unrenew-license {
   width: 45%;
   float:right;
+}
+
+.custom-select{
+  margin-bottom: 0px !important;
 }
 

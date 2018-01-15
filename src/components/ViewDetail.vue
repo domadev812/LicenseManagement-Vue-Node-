@@ -16,6 +16,14 @@
           <div class = "col-md-6 col-sm-6">
             <div class = "row">
               <div class = "col-md-12">
+                <b-form-group horizontal
+                  label="License ID:"
+                  label-class="text-sm-right"
+                  label-for="detailLicenseID">
+                  <b-form-input id="detailLicenseID" value = "License ID"></b-form-input>
+                </b-form-group>
+              </div>
+              <div class = "col-md-12">
                  <b-form-group horizontal
                   label="Company:"
                   label-class="text-sm-right"
@@ -56,15 +64,7 @@
                   <b-form-select id = "detailProduct" v-model="selectedProduct" :options="products">
                   </b-form-select>
                 </b-form-group>
-              </div>
-              <div class = "col-md-12">
-                 <b-form-group horizontal
-                  label="License ID:"
-                  label-class="text-sm-right"
-                  label-for="detailLicenseID">
-                  <b-form-input id="detailLicenseID" value = "License ID"></b-form-input>
-                </b-form-group>
-              </div>
+              </div>              
             </div>
           </div>
           <div class = "col-md-6 col-sm-6">
@@ -79,7 +79,7 @@
               </div>
               <div class = "col-md-12">
                  <b-form-group horizontal
-                  label="Contact Email::"
+                  label="Contact Email:"
                   label-class="text-sm-right"
                   label-for="detailContactEmail">
                   <b-form-input id="detailContactEmail" value = "bsmith@foo.com"></b-form-input>
@@ -103,21 +103,13 @@
               </div>
               <div class = "col-md-12">
                  <b-form-group horizontal
-                  label="Renew Status:"
+                  label="Customer Status:"
                   label-class="text-sm-right"
-                  label-for="detailRenew">
-                  <b-form-input id="detailRenew" disabled v-model = "renewStatus"></b-form-input>
+                  label-for="detailCustomStatus">
+                  <b-form-select id = "detailCustomStatus" v-model="selectedCustomStatus" :options="customStatus">
+                  </b-form-select>
                 </b-form-group>
               </div>
-              <div class = "col-md-12">
-                <b-form-group horizontal
-                  label=""
-                  label-class="text-sm-right"
-                  label-for="">
-                  <button type="button" class="btn btn-success btn-renew-license" @click="changeRenewStatus('Renewed')">Renew License</button>
-                  <button type="button" class="btn btn-success btn-unrenew-license" @click="changeRenewStatus('Unrenewed')">Un-renew License</button>
-                </b-form-group>
-              </div class>
             </div>
           </div>
         </div>        
@@ -135,17 +127,7 @@
             </b-form-textarea>          
           </div>
         </div>
-      </div>      
-      <div class = "col-md-6 col-sm-6 col-xs-12 col-part-detail">
-        <div class = "content-panel">
-          <div class = "row sub-title">Purchase Orders</div>
-          <div class = "row detail-panel">
-            <div class = "col-md-12">12/1/17: In-4087.pdf</div>
-            <div class = "col-md-12">12/1/17: In-4087.pdf</div>
-            <button type="button" class="btn btn-success btn-small form-group">Add</button>
-          </div>
-        </div>
-      </div>
+      </div>            
       <div class = "col-md-6 col-sm-6 col-xs-12 col-part-detail">
         <div class = "content-panel">
           <div class = "row sub-title">License Status</div>
@@ -174,17 +156,41 @@
             </div>          
           </div>
         </div>
-      </div>      
-      <div class = "col-md-6 col-sm-6 col-xs-12 col-part-detail">
-        <div class = "content-panel">
-          <div class = "row sub-title">Quotes</div>
-          <div class = "row detail-panel">
-            <div class = "col-md-12">12/1/17: In-4087.pdf</div>
-            <div class = "col-md-12">12/1/17: In-4087.pdf</div>
-            <button type="button" class="btn btn-success btn-small form-group">Add</button>
+      </div> 
+      <div class = "col-md-12 col-detail">
+        <div class = "row">
+          <div class = "col-md-4 col-sm-4 col-xs-12">
+            <div class = "content-panel">
+              <div class = "row sub-title">Invoices</div>
+              <div class = "row detail-panel">
+                <div class = "col-md-12">12/1/17: In-4087.pdf</div>
+                <div class = "col-md-12">12/1/17: In-4087.pdf</div>
+                <button type="button" class="btn btn-success btn-small form-group">Add</button>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+          <div class = "col-md-4 col-sm-4 col-xs-12">
+            <div class = "content-panel">
+              <div class = "row sub-title">Quotes</div>
+              <div class = "row detail-panel">
+                <div class = "col-md-12">12/1/17: In-4087.pdf</div>
+                <div class = "col-md-12">12/1/17: In-4087.pdf</div>
+                <button type="button" class="btn btn-success btn-small form-group">Add</button>
+              </div>
+            </div>
+          </div>
+          <div class = "col-md-4 col-sm-4 col-xs-12">
+            <div class = "content-panel">
+              <div class = "row sub-title">Purchase Orders</div>
+              <div class = "row detail-panel">
+                <div class = "col-md-12">12/1/17: In-4087.pdf</div>
+                <div class = "col-md-12">12/1/17: In-4087.pdf</div>
+                <button type="button" class="btn btn-success btn-small form-group">Add</button>
+              </div>
+            </div>
+          </div>
+        </div>        
+      </div>                
       <div class = "col-md-12 col-detail">
         <div class = "row sub-title">Important Notes</div>
         <div class = "row detail-panel">          
@@ -245,6 +251,12 @@ export default {
       selectedIndex: -1,
       issueDate: '2017-12-12',
       expireDate: '2017-12-12',
+      selectedCustomStatus: 'new',
+      customStatus: [
+        { value: 'new', text: 'New' },
+        { value: 'renewal', text: 'Renewal' },
+        { value: 'lost', text: 'Lost' }
+      ],
       selectedType: 'Enterprise',      
       licenseType: [
         { value: 'Enterprise', text: 'Enterprise' },
@@ -272,9 +284,6 @@ export default {
   methods: {
     backToHome() {
       this.$router.go(-1);
-    },
-    changeRenewStatus(status) {
-      this.renewStatus = status;
     },
     setEditFields(flag) {
       if(flag) {

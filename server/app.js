@@ -58,7 +58,7 @@ function getMaxID() {
 
 function getNewRecords(maxID) {
   var self = this;  
-  connectionRead.query("SELECT L.licenseID as license_id, L.userFullName, L.userEMail, L.userCompany, P.productName FROM licenses as L JOIN products as P on P.productid = L.productid where L.licenseID > " + maxID + " order by L.licenseID", function(err, result) {
+  connectionRead.query("SELECT L.licenseID as license_id, L.userFullName, L.userEMail, L.userCompany, L.userRegisteredTo, P.productName FROM licenses as L JOIN products as P on P.productid = L.productid where L.licenseID > " + maxID + " order by L.licenseID", function(err, result) {
     if (err) throw err; 
     var newRecords = [];
     result.forEach(function(item){
@@ -74,7 +74,7 @@ function getNewRecords(maxID) {
       return;
     }
     // self.res.send(result);
-    var sql = "INSERT INTO licenses (license_id, userFullName, userEMail, userCompany, productName) VALUES ?";
+    var sql = "INSERT INTO licenses (license_id, userFullName, userEMail, userCompany, userRegisteredTo, productName) VALUES ?";
     connectionWrite.query(sql, [newRecords], function (err, result) {      
       if (err) {
         console.log(this.sql);
