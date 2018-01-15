@@ -1,7 +1,8 @@
 import axios from 'axios'
 import toNumber from 'lodash/toNumber'
 
-let baseUrl = 'http://192.168.0.100:8080/'
+let baseUrl = 'http://localhost:8080/'
+// let baseUrl = 'http://192.168.0.100:8080/'
 let convertObjectToFormData = (items) => {
   const formData = new FormData()
   for (let key in items) {
@@ -22,7 +23,8 @@ let convertObjectToUrlData = (items) => {
 
 let config = {
   protocol: 'https',
-  address: '192.168.0.100',
+  // address: '192.168.0.100',
+  address: 'localhost',
   port: '8080',
   basePath: '',
   axiosConfig: {

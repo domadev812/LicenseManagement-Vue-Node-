@@ -20,7 +20,7 @@
                   label="Company:"
                   label-class="text-sm-right"
                   label-for="detailCompany">
-                  <b-form-input id="detailCompany" value = "Google"></b-form-input>
+                  <b-form-input id="detailCompany"  value = "Google"></b-form-input>
                 </b-form-group>
               </div>
               <div class = "col-md-12">
@@ -36,7 +36,7 @@
                   label="Expiry Date:"
                   label-class="text-sm-right"
                   label-for="detailExpireDate">
-                  <b-form-input id="detailExpireDate" :type="'date'" v-model="expireDate"></b-form-input>
+                  <b-form-input id="detailExpireDate"  :type="'date'" v-model="expireDate"></b-form-input>
                 </b-form-group>
               </div>
               <div class = "col-md-12">
@@ -44,7 +44,7 @@
                   label="License Type:"
                   label-class="text-sm-right"
                   label-for="detailLicenseType">
-                  <b-form-select id = "detailLicenseType" v-model="selectedType" :options="licenseType" class="mb-3">
+                  <b-form-select id = "detailLicenseType"  v-model="selectedType" :options="licenseType">
                   </b-form-select>
                 </b-form-group>
               </div>
@@ -53,7 +53,7 @@
                   label="Product:"
                   label-class="text-sm-right"
                   label-for="detailProduct">
-                  <b-form-select id = "detailProduct" v-model="selectedProduct" :options="products" class="mb-3">
+                  <b-form-select id = "detailProduct" v-model="selectedProduct" :options="products">
                   </b-form-select>
                 </b-form-group>
               </div>
@@ -198,27 +198,54 @@
         </div>
       </div>
       <div class = "col-md-12" style = "text-align:right;">
-        <button type="button" class="btn btn-success btn-small form-group">Edit</button>
-        <button type="button" class="btn btn-success btn-small form-group">Save</button>
+        <button type="button" id="btnEdit" class="btn btn-success btn-small form-group" @click="setEditFields(true)">Edit</button>
+        <button type="button" id="btnSave" class="btn btn-success btn-small form-group">Save</button>
       </div>
     </div>
   </div>  
 </template>
 <script>
+import { mapGetters } from 'vuex'
 export default {
   name: 'ViewDetail',
   created() {
-    // console.log(this.$route.params.id);
-    this.jsonTest.id = "ID";
-    this.jsonTest.name = "Name";
-    console.log(this.jsonTest);
+    this.selectedIndex = -1;
+    this.selectedIndex = this.$route.params.id;
+    console.log(this.selectedIndex);
+    let self = this;
+    $(document).ready(function(){
+      self.setEditFields(false);
+    });    
+  },
+  computed: {
+    ...mapGetters({
+      records: 'getRecords'
+    })
+  },
+  watch: {
+    selectedIndex: {      
+      handler () {   
+        if(this.records.length > 0)
+        {
+          this.selectedRecord = this.records[this.selectedIndex];
+        }
+      }
+    },
+    records: {
+      handler () {
+        if(this.records.length > 0 && selectedIndex != -1) {
+          this.selectedRecord = this.records[this.selectedIndex];
+        }
+      }
+    }
   },
   data () {
     return {
-      jsonTest: {},
+      selectedRecord:{},
+      selectedIndex: -1,
       issueDate: '2017-12-12',
       expireDate: '2017-12-12',
-      selectedType: 'Enterprise',
+      selectedType: 'Enterprise',      
       licenseType: [
         { value: 'Enterprise', text: 'Enterprise' },
         { value: 'Basic', text: 'Basic' }
@@ -248,6 +275,24 @@ export default {
     },
     changeRenewStatus(status) {
       this.renewStatus = status;
+    },
+    setEditFields(flag) {
+      if(flag) {
+        $("input").removeAttr("disabled");
+        $("select").removeAttr("disabled");
+        $("textarea").removeAttr("disabled");
+        $(".col-detail button").removeAttr("disabled");
+        $(".col-part-detail button").removeAttr("disabled");
+        $("#btnSave").removeAttr("disabled");
+        $("#btnEdit").attr("disabled", "");
+      } else {
+        $("input").attr("disabled", "");
+        $("select").attr("disabled", "");
+        $("textarea").attr("disabled", "");
+        $(".col-detail button").attr("disabled", "");
+        $(".col-part-detail button").attr("disabled", "");
+        $("#btnSave").attr("disabled", "");
+      }
     }
   }
 }

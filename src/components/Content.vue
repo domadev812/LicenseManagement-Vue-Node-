@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid">
+  <div class="container-fluid">    
     <h1 class = 'page-title'>License Database Records</h1>
     <div class="panel-group">
       <div class="panel panel-default">                
@@ -55,29 +55,36 @@
             <th>Status</th>
           </tr>
         </thead>
-        <tbody>        
+        <tbody v-if = "records.length > 0">                 
           <tr v-for="n in endIndex - startIndex + 1" @click="vieweDetail(n - 1)">
-            <td>License ID</td>            
-            <td>{{records[n + startIndex - 1].name}}</td>            
-            <td>{{records[n + startIndex - 1].email}}</td>
-            <td>{{records[n + startIndex - 1].company}}</td>            
-            <td>{{records[n + startIndex - 1].product}}</td>            
+            <td>{{records[n + startIndex - 1].license_id}}</td>            
+            <td>{{records[n + startIndex - 1].userFullName}}</td>            
+            <td>{{records[n + startIndex - 1].userEMail}}</td>
+            <td>{{records[n + startIndex - 1].userCompany}}</td>            
+            <td>{{records[n + startIndex - 1].productName}}</td>            
             <td>{{records[n + startIndex - 1].issueDate}}</td>            
             <td>{{records[n + startIndex - 1].expireDate}}</td> 
             <td>Email Sent</td>           
-          </tr>          
-           
+          </tr>                     
+        </tbody>
+        <tbody v-else>
+          <tr>
+            <td colspan="8">
+              No Records
+            </td>
+          </tr>
         </tbody>
       </table>
       <b-pagination size="md" :total-rows="totalRecords" v-model="currentPage" :per-page="perPage">
       </b-pagination>
     </div>
+    <LoadingModal></LoadingModal>
   </div>  
 </template>
 <script>
 import { mapGetters } from 'vuex'
 import { Card } from 'bootstrap-vue/es/components'
-
+const LoadingModal = () => import(/* webpackChunkName: "Content" */ './Loading.vue')
 export default {
   name: 'Content',
   computed: {
@@ -85,14 +92,14 @@ export default {
       loading: 'getLoadingFlag'
     })
   },
-  components: {Card},
+  components: {Card, LoadingModal},
   data () {
     return {
       msg: 'Welcome to Your Vue.js App',
       totalRecords: 67,
       perPage: 10,
       totalPages: 1,
-      currentPage: 0,
+      currentPage: 1,
       startIndex: 0,
       endIndex: 0,
       selectedProduct: 'Bumblebee',
@@ -113,36 +120,40 @@ export default {
       records: []
     }
   },
-  created() {
-    this.totalPages = Math.ceil(this.totalRecords / this.perPage);     
-    this.currentPage = 1;
-    for(let i = 0; i < this.totalRecords; i++) {
-      let item = {"name":"name" + i, "email":"email" + i, "product":this.products[i % 4].text, "company": "company" + i, "issueDate": "2017-12-09", "expireDate": "2018-09-09"};
-      this.records.push(item);
-    }
+  created() {       
     this.fetchNewRecords();
   },
   watch: {
-      currentPage: {
-        handler () {
-          this.startIndex = (this.currentPage - 1) * this.perPage;
-          if(this.currentPage == this.totalPages) {
-            this.endIndex = this.totalRecords - 1;
-          } else {
-            this.endIndex = this.currentPage * this.perPage - 1;
-          }
+    currentPage: {
+      handler () {
+        this.startIndex = (this.currentPage - 1) * this.perPage;
+        if(this.currentPage == this.totalPages) {
+          this.endIndex = this.totalRecords - 1;
+        } else {
+          this.endIndex = this.currentPage * this.perPage - 1;
         }
       }
-    },
+    }
+  },
   methods: {
     vieweDetail(index) {
       this.$router.push({name: 'ViewDetail', params: { id: index }})
     },
     fetchNewRecords: function () {   
+      let self = this;
+      this.$store.dispatch('setLoadingFlag', 'flex');
+      this.$store.dispatch('setLoadingText', 'Loading...');
       this.$store.dispatch('fetchNewRecords')
         .then((response) => {
-          this.$store.dispatch('setLoading', false);
-          console.log(response);
+          this.$store.dispatch('setLoadingFlag', false);  
+          this.records = response;         
+          this.totalRecords = this.records.length;
+          this.totalPages = Math.ceil(this.totalRecords / this.perPage);               
+          this.currentPage = 1;
+          if(this.totalRecords > 10) this.endIndex = 9;                                  
+          this.$store.dispatch('setLoadingFlag', 'none');
+          this.$store.dispatch('setRecords', this.records);
+          console.log(this.records);
         }).catch((error) => {
           console.log("Error");          
         }

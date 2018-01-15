@@ -12,7 +12,9 @@ Vue.prototype.$jQuery = jQuery
 const debug = process.env.NODE_ENV !== 'production'
 
 const state = {
-  loading: false
+  loading: 'none',  
+  loadingText: 'Loading...',  
+  records: []
 }
 
 export default new Vuex.Store({
