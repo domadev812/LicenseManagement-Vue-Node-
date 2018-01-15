@@ -4,8 +4,8 @@
       <div class = "col-md-12">
         <button type="button" class="btn btn-success btn-back-results" @click="backToHome()"><i class = "fa fa-angle-left"></i>&nbsp;&nbsp;Back to Search Results</button>
         <div class ="btn-group-move">
-          <button type="button" class="btn btn-success"><i class = "fa fa-angle-left"></i>&nbsp;&nbsp;Previous Record</button>
-          <button type="button" class="btn btn-success">Next Record&nbsp;&nbsp;<i class = "fa fa-angle-right"></i></button>
+          <button type="button" class="btn btn-success btn-previous"  @click="gotoPrevious()"><i class = "fa fa-angle-left"></i>&nbsp;&nbsp;Previous Record</button>
+          <button type="button" class="btn btn-success btn-next" @click="gotoNext()">Next Record&nbsp;&nbsp;<i class = "fa fa-angle-right"></i></button>
         </div>
       </div>
     </div>
@@ -216,12 +216,12 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'ViewDetail',
   created() {
-    this.selectedIndex = -1;
-    this.selectedIndex = this.$route.params.id - 1;    
+    this.selectedIndex = -1;    
     this.records = this.$ls.get('records');        
     let self = this;
-    $(document).ready(function(){
-      self.setEditFields(false);
+    $(document).ready(function(){      
+      self.selectedIndex = self.$route.params.id - 1;    
+      self.setEditFields(false);      
     });    
   },
   computed: {
@@ -248,8 +248,10 @@ export default {
             userFullName: '',
             userRegisteredTo: '',
           }
+          
+          this.setEditFields(true);
           return;
-        }
+        }        
         if(this.records.length > 0)        
           this.selectedRecord = this.records[this.selectedIndex];        
         
@@ -262,6 +264,16 @@ export default {
           this.selectedRecord.licenseState = "accepted";
         else
           this.selectedRecord.licenseState = "not_accepted";
+         
+        if(this.selectedIndex == 0) 
+          $(".btn-previous").attr("disabled", "");
+        else 
+          $(".btn-previous").removeAttr("disabled");
+
+        if(this.selectedIndex == this.records.length - 1) 
+          $(".btn-next").attr("disabled", "");
+        else 
+          $(".btn-next").removeAttr("disabled");
       }
     }
   },
@@ -341,8 +353,15 @@ export default {
         $("textarea").attr("disabled", "");
         $(".col-detail button").attr("disabled", "");
         $(".col-part-detail button").attr("disabled", "");
+        $("#btnEdit").removeAttr("disabled");
         $("#btnSave").attr("disabled", "");
-      }
+      }      
+    },
+    gotoPrevious() {
+      this.selectedIndex--;
+    },
+    gotoNext() {
+      this.selectedIndex++;
     }
   }
 }
