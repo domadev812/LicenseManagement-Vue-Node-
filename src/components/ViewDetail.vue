@@ -20,7 +20,7 @@
                   label="License ID:"
                   label-class="text-sm-right"
                   label-for="detailLicenseID">
-                  <b-form-input id="detailLicenseID" value = "License ID"></b-form-input>
+                  <b-form-input id="detailLicenseID" v-model = "selectedRecord.license_id"></b-form-input>
                 </b-form-group>
               </div>
               <div class = "col-md-12">
@@ -28,7 +28,7 @@
                   label="Company:"
                   label-class="text-sm-right"
                   label-for="detailCompany">
-                  <b-form-input id="detailCompany"  value = "Google"></b-form-input>
+                  <b-form-input id="detailCompany"  v-model = "selectedRecord.userCompany"></b-form-input>
                 </b-form-group>
               </div>
               <div class = "col-md-12">
@@ -36,7 +36,7 @@
                   label="Issue Date:"
                   label-class="text-sm-right"
                   label-for="detailIssueDate">
-                  <b-form-input id="detailIssueDate" :type="'date'" v-model="issueDate"></b-form-input>
+                  <b-form-input id="detailIssueDate" :type="'date'" v-model = "selectedRecord.issueDate"></b-form-input>
                 </b-form-group>
               </div>
               <div class = "col-md-12">
@@ -44,7 +44,7 @@
                   label="Expiry Date:"
                   label-class="text-sm-right"
                   label-for="detailExpireDate">
-                  <b-form-input id="detailExpireDate"  :type="'date'" v-model="expireDate"></b-form-input>
+                  <b-form-input id="detailExpireDate" :type="'date'" v-model = "selectedRecord.expireDate"></b-form-input>
                 </b-form-group>
               </div>
               <div class = "col-md-12">
@@ -52,7 +52,7 @@
                   label="License Type:"
                   label-class="text-sm-right"
                   label-for="detailLicenseType">
-                  <b-form-select id = "detailLicenseType"  v-model="selectedType" :options="licenseType">
+                  <b-form-select id = "detailLicenseType" v-model = "selectedRecord.licenseType" :options="licenseType">
                   </b-form-select>
                 </b-form-group>
               </div>
@@ -61,7 +61,7 @@
                   label="Product:"
                   label-class="text-sm-right"
                   label-for="detailProduct">
-                  <b-form-select id = "detailProduct" v-model="selectedProduct" :options="products">
+                  <b-form-select id = "detailProduct" v-model = "selectedRecord.productName" :options="products">
                   </b-form-select>
                 </b-form-group>
               </div>              
@@ -74,7 +74,7 @@
                   label="Contact Name:"
                   label-class="text-sm-right"
                   label-for="detailContactName">
-                  <b-form-input id="detailContactName" value = "Bill Smith"></b-form-input>
+                  <b-form-input id="detailContactName" v-model = "selectedRecord.userFullName"></b-form-input>
                 </b-form-group>
               </div>
               <div class = "col-md-12">
@@ -82,7 +82,7 @@
                   label="Contact Email:"
                   label-class="text-sm-right"
                   label-for="detailContactEmail">
-                  <b-form-input id="detailContactEmail" value = "bsmith@foo.com"></b-form-input>
+                  <b-form-input id="detailContactEmail" v-model = "selectedRecord.userEMail"></b-form-input>
                 </b-form-group>
               </div>
               <div class = "col-md-12">
@@ -90,7 +90,7 @@
                   label="License URL:"
                   label-class="text-sm-right"
                   label-for="detailLicenseURL">
-                  <b-form-input id="detailLicenseURL" value = "https://aws.com/s3/23423.14j"></b-form-input>
+                  <b-form-input id="detailLicenseURL" v-model = "selectedRecord.licenseURL"></b-form-input>
                 </b-form-group>
               </div>
               <div class = "col-md-12">
@@ -98,7 +98,7 @@
                   label="Freshsales URL:"
                   label-class="text-sm-right"
                   label-for="detailFreshsalesURL">
-                  <b-form-input id="detailFreshsalesURL" value = "https://freshsales.com/deals/23423.14j"></b-form-input>
+                  <b-form-input id="detailFreshsalesURL" v-model = "selectedRecord.freshsalesURL"></b-form-input>
                   </b-form-group>
               </div>
               <div class = "col-md-12">
@@ -106,7 +106,7 @@
                   label="Customer Status:"
                   label-class="text-sm-right"
                   label-for="detailCustomStatus">
-                  <b-form-select id = "detailCustomStatus" v-model="selectedCustomStatus" :options="customStatus">
+                  <b-form-select id = "detailCustomStatus" v-model = "selectedRecord.customerStatus" :options="customStatus">
                   </b-form-select>
                 </b-form-group>
               </div>
@@ -119,7 +119,7 @@
           <div class = "row sub-title">Accounts Payable + Decision Makers Info</div>
           <div class = "row detail-panel" style = "margin-bottom:10px;">          
             <b-form-textarea id="textarea1"
-                      v-model="payableContent"
+                      v-model = "selectedRecord.accountsPayable"
                       placeholder="Enter something"
                       :rows="3"
                       :no-resize="true"
@@ -137,7 +137,7 @@
                 label="Status:"
                 label-class="text-sm-right"
                 label-for="detailLicenseStatus">
-                  <b-form-select id = "detailLicenseStatus" v-model="selectedLicenseStatus" :options="licenseStatus" class="mb-3">
+                  <b-form-select id = "detailLicenseStatus" v-model = "selectedRecord.licenseStatus" :options="licenseStatus" class="mb-3">
                   </b-form-select>
               </b-form-group>
             </div>
@@ -147,7 +147,7 @@
                 label-class="text-sm-right"
                 label-for="detailLicenseState">
                   <b-form-checkbox id="detailLicenseState"
-                      v-model="licenseState"
+                      v-model = "selectedRecord.licenseState"
                       value="accepted"
                       unchecked-value="not_accepted">
                       Archive
@@ -195,7 +195,7 @@
         <div class = "row sub-title">Important Notes</div>
         <div class = "row detail-panel">          
           <b-form-textarea id="textarea1" class = "form-group"
-                     v-model="payableContent"
+                     v-model = "selectedRecord.importantNotes"
                      placeholder="Enter something"
                      :rows="3"
                      :no-resize="true"
@@ -205,50 +205,88 @@
       </div>
       <div class = "col-md-12" style = "text-align:right;">
         <button type="button" id="btnEdit" class="btn btn-success btn-small form-group" @click="setEditFields(true)">Edit</button>
-        <button type="button" id="btnSave" class="btn btn-success btn-small form-group">Save</button>
+        <button type="button" id="btnSave" class="btn btn-success btn-small form-group" @click="saveRecord()">Save</button>
       </div>
     </div>
   </div>  
 </template>
 <script>
 import { mapGetters } from 'vuex'
+
 export default {
   name: 'ViewDetail',
   created() {
     this.selectedIndex = -1;
-    this.selectedIndex = this.$route.params.id;
-    console.log(this.selectedIndex);
+    this.selectedIndex = this.$route.params.id - 1;    
+    this.records = this.$ls.get('records');        
     let self = this;
     $(document).ready(function(){
       self.setEditFields(false);
     });    
   },
   computed: {
-    ...mapGetters({
-      records: 'getRecords'
-    })
   },
   watch: {
     selectedIndex: {      
       handler () {   
-        if(this.records.length > 0)
-        {
-          this.selectedRecord = this.records[this.selectedIndex];
+        if(this.selectedIndex < 0 || this.selectedIndex >= this.records.length) {          
+          this.selectedRecord = {
+            accountsPayable: '',
+            customerStatus: '',
+            issueDate: '2018-01-01',
+            expireDate: '2018-01-01',      
+            freshsalesURL: '',
+            importantNotes: '',
+            licenseState: 'not_accepted',
+            licenseStatus: '',
+            licenseType: '',
+            licenseURL: '',
+            license_id: '',
+            productName: '',
+            userCompany: '',
+            userEMail: '',
+            userFullName: '',
+            userRegisteredTo: '',
+          }
+          return;
         }
-      }
-    },
-    records: {
-      handler () {
-        if(this.records.length > 0 && selectedIndex != -1) {
-          this.selectedRecord = this.records[this.selectedIndex];
-        }
+        if(this.records.length > 0)        
+          this.selectedRecord = this.records[this.selectedIndex];        
+        
+        if(this.selectedRecord.issueDate == null)
+          this.selectedRecord.issueDate = "2018-01-02";
+        if(this.selectedRecord.expireDate == null)
+          this.selectedRecord.expireDate = "2018-01-02";
+
+        if(this.selectedRecord.licenseState == 1)   
+          this.selectedRecord.licenseState = "accepted";
+        else
+          this.selectedRecord.licenseState = "not_accepted";
       }
     }
   },
   data () {
     return {
-      selectedRecord:{},
+      selectedRecord:{
+        accountsPayable: '',
+        customerStatus: '',
+        expireDate: null,      
+        freshsalesURL: '',
+        importantNotes: '',
+        issueDate: null,
+        licenseState: 'not_accepted',
+        licenseStatus: '',
+        licenseType: '',
+        licenseURL: '',
+        license_id: '',
+        productName: '',
+        userCompany: '',
+        userEMail: '',
+        userFullName: '',
+        userRegisteredTo: '',
+      },      
       selectedIndex: -1,
+      records: [],
       issueDate: '2017-12-12',
       expireDate: '2017-12-12',
       selectedCustomStatus: 'new',
@@ -268,13 +306,13 @@ export default {
         { value: 'Email Sent', text: 'Email Sent' },
         { value: 'Multiple Emails', text: 'Multiple Emails' }
       ],
-      selectedProduct: 'Bumblebee',
+      selectedProduct: 'bumblebee',
       products: [
-        { value: 'Bumblebee', text: 'Bumblebee' },
-        { value: 'Eggplant-alm', text: 'Eggplant-alm' },
-        { value: 'Dragonfly', text: 'Dragonfly' },
-        { value: 'Firefly', text: 'Firefly' },
-        { value: 'Pangolin', text: 'Pangolin' }
+        { value: 'bumblebee', text: 'Bumblebee' },
+        { value: 'eggplant-alm', text: 'Eggplant-alm' },
+        { value: 'dragonfly', text: 'Dragonfly' },
+        { value: 'firefly', text: 'Firefly' },
+        { value: 'pangolin', text: 'Pangolin' }
       ],
       renewStatus: 'Renewed',
       licenseState: 'not_accepted',
@@ -283,7 +321,10 @@ export default {
   },
   methods: {
     backToHome() {
-      this.$router.go(-1);
+      this.$router.push({name: 'Content'});
+    },
+    saveRecord() {
+      console.log(this.selectedRecord);
     },
     setEditFields(flag) {
       if(flag) {

@@ -69,7 +69,6 @@
                   <b-form-checkbox
                       v-model="basic"
                       value="accepted"
-                      class = "license-type"
                       unchecked-value="not_accepted">
                       Basic
                   </b-form-checkbox>
@@ -142,7 +141,7 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
-import { Card } from 'bootstrap-vue/es/components'
+
 const LoadingModal = () => import(/* webpackChunkName: "Content" */ './Loading.vue')
 export default {
   name: 'Content',
@@ -151,7 +150,7 @@ export default {
       loading: 'getLoadingFlag'
     })
   },
-  components: {Card, LoadingModal},
+  components: {LoadingModal},
   data () {
     return {
       msg: 'Welcome to Your Vue.js App',
@@ -200,14 +199,14 @@ export default {
   },
   methods: {
     vieweDetail(index) {
-      this.$router.push({name: 'ViewDetail', params: { id: index }})
+      this.$router.push({name: 'ViewDetail', params: { id: index + 1}})
     },
     fetchNewRecords: function () {   
       let self = this;
       this.$store.dispatch('setLoadingFlag', 'flex');
       this.$store.dispatch('setLoadingText', 'Loading...');
       this.$store.dispatch('fetchNewRecords')
-        .then((response) => {
+        .then((response) => {          
           this.$store.dispatch('setLoadingFlag', false);  
           this.records = response;         
           this.totalRecords = this.records.length;
@@ -215,10 +214,10 @@ export default {
           this.currentPage = 1;
           if(this.totalRecords > 10) this.endIndex = 9;                                  
           this.$store.dispatch('setLoadingFlag', 'none');
-          this.$store.dispatch('setRecords', this.records);
-          console.log(this.records);
-        }).catch((error) => {
-          console.log("Error");          
+          self.$ls.set('records', this.records);
+          this.$store.dispatch('setRecords', this.records);          
+        }).catch((error) => {    
+          console.log('Error');    
         }
       )
     }
