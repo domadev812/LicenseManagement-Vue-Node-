@@ -151,15 +151,15 @@
       <table class="table table-striped table-hover">
         <thead>
           <tr style = "background: rgb(114, 202, 95);color: white;font-size: 16px;">
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Company</th>
-            <th>Product</th>
-            <th>Deal Value</th>
-            <th>Issue Date</th>
-            <th>Expire Date</th>
-            <th>Updated Date</th>
+            <th>ID <i class = "fa fa-angle-down"></i></th>
+            <th>Name <i class = "fa"></i></th>
+            <th>Email <i class = "fa"></i></th>
+            <th>Company <i class = "fa"></i></th>
+            <th>Product <i class = "fa"></i></th>
+            <th>Deal Value <i class = "fa"></i></th>
+            <th>Issue Date <i class = "fa"></i></th>
+            <th>Expire Date <i class = "fa"></i></th>
+            <th>Updated Date <i class = "fa"></i></th>
           </tr>
         </thead>
         <tbody v-if = "records.length > 0">                 

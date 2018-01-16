@@ -73,6 +73,9 @@ tr{
   overflow-x: auto;
 }
 
+.database-table i{
+  margin-left: 10px;
+}
 .clear {
   display: none !important;
 }
