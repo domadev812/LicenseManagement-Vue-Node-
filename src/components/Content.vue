@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">    
-    <h1 class = 'page-title'>License Database Records</h1>
+    <div class = 'page-title'> <img src = "https://www.agiletestware.com/images/agiletestware_logo.png"></div>
     <div class="panel-group">
       <div class="panel panel-default">                
         <b-card v-b-toggle.collapse1 variant="primary" class = "filter-panel">Filter Options<i class="fa fa-angle-double-down filter-condition-arrow"></i></b-card >
@@ -17,82 +17,130 @@
                 </div>
               </div>
             </div> 
-            <div class = "col-md-7 col-sm-6">
+            <div class = "col-md-9 col-sm-8">
               <div class = "row">
-                <div class = "col-md-3 col-sm-6">
-                  <b-form-checkbox
-                      v-model="bumblebee"
-                      value="accepted"
-                      unchecked-value="not_accepted">
-                      Bulblebee
-                  </b-form-checkbox>
-                  <b-form-checkbox
-                      v-model="eggplant"
-                      value="accepted"
-                      unchecked-value="not_accepted">
-                      Eggplant
-                  </b-form-checkbox>
-                  <b-form-checkbox
-                      v-model="dragonfly"
-                      value="accepted"
-                      unchecked-value="not_accepted">
-                      Dragonfly
-                  </b-form-checkbox>
-                  <b-form-checkbox
-                      v-model="firefly"
-                      value="accepted"
-                      unchecked-value="not_accepted">
-                      Firefly
-                  </b-form-checkbox>
-                  <b-form-checkbox
-                      v-model="pangolin"
-                      value="accepted"
-                      unchecked-value="not_accepted">
-                      Pangolin
-                  </b-form-checkbox>
+                <div class = "col-md-3 col-sm-6 col-product">
+                  <p>PRODUCT: </p>
+                  <div>
+                    <b-form-checkbox
+                        v-model="bumblebee"
+                        value="accepted"
+                        unchecked-value="not_accepted">
+                        Bumblebee
+                    </b-form-checkbox>
+                  </div>
+                  <div>
+                    <b-form-checkbox
+                        v-model="eggplant"
+                        value="accepted"
+                        unchecked-value="not_accepted">
+                        Eggplant
+                    </b-form-checkbox>
+                  </div>
+                  <div>
+                    <b-form-checkbox
+                        v-model="dragonfly"
+                        value="accepted"
+                        unchecked-value="not_accepted">
+                        Dragonfly
+                    </b-form-checkbox>
+                  </div>
+                  <div>
+                    <b-form-checkbox
+                        v-model="firefly"
+                        value="accepted"
+                        unchecked-value="not_accepted">
+                        Firefly
+                    </b-form-checkbox>
+                  </div>
+                  <div>
+                    <b-form-checkbox
+                        v-model="pangolin"
+                        value="accepted"
+                        unchecked-value="not_accepted">
+                        Pangolin
+                    </b-form-checkbox>
+                  </div>
                 </div>
                 <div class = "col-md-3 col-sm-6">
-                  <b-form-checkbox
-                      v-model="paid"
-                      value="accepted"
-                      unchecked-value="not_accepted">
-                      Paid
-                  </b-form-checkbox>
-                  <b-form-checkbox
-                      v-model="evaluation"
-                      value="accepted"
-                      unchecked-value="not_accepted">
-                      Evaluation
-                  </b-form-checkbox>
+                  <p>LICENSE TYPE: </p>
+                  <div>
+                    <b-form-checkbox
+                        v-model="evaluation"
+                        value="accepted"
+                        unchecked-value="not_accepted">
+                        Evaluation
+                    </b-form-checkbox>
+                  </div>
+                  <div>
+                    <b-form-checkbox
+                        v-model="basic"
+                        value="accepted"
+                        unchecked-value="not_accepted">
+                        Basic
+                    </b-form-checkbox>
+                  </div>
+                  <div>                  
+                    <b-form-checkbox
+                        v-model="enterprise"
+                        class = "license-type"
+                        value="accepted"
+                        unchecked-value="not_accepted">
+                        Enterprise
+                    </b-form-checkbox>
+                  </div>
                 </div>
                 <div class = "col-md-3 col-sm-6">
-                  <b-form-checkbox
-                      v-model="basic"
-                      value="accepted"
-                      unchecked-value="not_accepted">
-                      Basic
-                  </b-form-checkbox>
-                  <b-form-checkbox
-                      v-model="enterprise"
-                      class = "license-type"
-                      value="accepted"
-                      unchecked-value="not_accepted">
-                      Enterprise
-                  </b-form-checkbox>
-                </div>
-                <div class = "col-md-3 col-sm-6">
-                  <b-form-checkbox
+                  <p>LICENSE STATE: </p>
+                  <div>
+                    <b-form-checkbox
                       v-model="showArchived"
                       value="accepted"
                       unchecked-value="not_accepted">
                       Show Archived
-                  </b-form-checkbox>
+                    </b-form-checkbox>
+                  </div>
+                  <p style = "margin-top:30px;">Deal Value: </p>
+                  <div class = "row">
+                    <div class = "col-md-4 col-sm-4">
+                      <b-form-input id="minDealValue"  v-model = "minDeal"></b-form-input>
+                    </div>
+                    <div class = "col-md-4 col-sm-4">
+                      <b-form-input id="maxDealValue"  v-model = "maxDeal"></b-form-input>
+                    </div>
+                  </div>
+                </div>
+                <div class = "col-md-3 col-sm-6">
+                  <p>CUSTOMER STATUS: </p>
+                   <div>                  
+                    <b-form-checkbox
+                        v-model="new_customer"
+                        class = "license-type"
+                        value="accepted"
+                        unchecked-value="not_accepted">
+                        New
+                    </b-form-checkbox>
+                  </div>
+                  <div>                  
+                    <b-form-checkbox
+                        v-model="renewal_customer"
+                        class = "license-type"
+                        value="accepted"
+                        unchecked-value="not_accepted">
+                        Renewal
+                    </b-form-checkbox>
+                  </div>
+                  <div>                  
+                    <b-form-checkbox
+                        v-model="lost_customer"
+                        class = "license-type"
+                        value="accepted"
+                        unchecked-value="not_accepted">
+                        Lost
+                    </b-form-checkbox>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class = "col-md-1 col-sm-2">
-              <b-form-select id = "detailCustomStatus" v-model="selectedCustomStatus" :options="customStatus">
-              </b-form-select>
             </div>                      
           </div>
           <div class="filter-footer"><button type="button" class="btn btn-success btn-filter">Filter</button></div>
@@ -108,26 +156,28 @@
             <th>Email</th>
             <th>Company</th>
             <th>Product</th>
+            <th>Deal Value</th>
             <th>Issue Date</th>
             <th>Expire Date</th>
-            <th>Status</th>
+            <th>Updated Date</th>
           </tr>
         </thead>
         <tbody v-if = "records.length > 0">                 
           <tr v-for="n in endIndex - startIndex + 1" @click="vieweDetail(n - 1)">
             <td>{{records[n + startIndex - 1].license_id}}</td>            
-            <td>{{records[n + startIndex - 1].userFullName}}</td>            
+            <td>{{capitalize(records[n + startIndex - 1].userFullName)}}</td>            
             <td>{{records[n + startIndex - 1].userEMail}}</td>
-            <td>{{records[n + startIndex - 1].userCompany}}</td>            
-            <td>{{records[n + startIndex - 1].productName}}</td>            
+            <td>{{capitalize(records[n + startIndex - 1].userCompany)}}</td>            
+            <td>{{capitalize(records[n + startIndex - 1].productName)}}</td>            
+            <td></td>
             <td>{{records[n + startIndex - 1].issueDate}}</td>            
-            <td>{{records[n + startIndex - 1].expireDate}}</td> 
-            <td>Email Sent</td>           
+            <td>{{records[n + startIndex - 1].expireDate}}</td>        
+            <td></td>
           </tr>                     
         </tbody>
         <tbody v-else>
           <tr>
-            <td colspan="8">
+            <td colspan="9">
               No Records
             </td>
           </tr>
@@ -172,18 +222,20 @@ export default {
       basic: 'accepted',
       enterprise: 'accepted',
       showArchived: 'not_accepted',      
-      selectedCustomStatus: '',
-      customStatus: [
-        { value: '', text: 'All' },
-        { value: 'new', text: 'New' },
-        { value: 'renewal', text: 'Renewal' },
-        { value: 'lost', text: 'Lost' }
-      ],               
+      new_customer: 'accepted',
+      renewal_customer: 'accepted',
+      lost_customer: 'accepted',
+      minDeal:0,
+      maxDeal:10000,               
       records: []
     }
   },
   created() {       
     this.fetchNewRecords();
+    let d = new Date();
+    this.startExpireDate = d.getFullYear() + "-0" + (d.getMonth() + 1) + "-" + d.getDate();
+    console.log(this.startExpireDate);
+    console.log(this.endExpireDate);
   },
   watch: {
     currentPage: {
@@ -217,9 +269,14 @@ export default {
           self.$ls.set('records', this.records);
           this.$store.dispatch('setRecords', this.records);          
         }).catch((error) => {    
+          this.$store.dispatch('setLoadingFlag', 'none');
           console.log('Error');    
         }
       )
+    },
+    capitalize: function(str) {
+      if(str == null || str == '') return '';
+      return str.charAt(0).toUpperCase() + str.slice(1);
     }
   }
 }

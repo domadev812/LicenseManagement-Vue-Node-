@@ -14,15 +14,7 @@
         <div class = "row sub-title">License Details</div>
         <div class = "row detail-panel">
           <div class = "col-md-6 col-sm-6">
-            <div class = "row">
-              <div class = "col-md-12">
-                <b-form-group horizontal
-                  label="License ID:"
-                  label-class="text-sm-right"
-                  label-for="detailLicenseID">
-                  <b-form-input id="detailLicenseID" v-model = "selectedRecord.license_id"></b-form-input>
-                </b-form-group>
-              </div>
+            <div class = "row">              
               <div class = "col-md-12">
                  <b-form-group horizontal
                   label="Company:"
@@ -46,6 +38,15 @@
                   label-for="detailExpireDate">
                   <b-form-input id="detailExpireDate" :type="'date'" v-model = "selectedRecord.expireDate"></b-form-input>
                 </b-form-group>
+              </div>              
+              <div class = "col-md-12">
+                 <b-form-group horizontal
+                  label="Product:"
+                  label-class="text-sm-right"
+                  label-for="detailProduct">
+                  <b-form-select id = "detailProduct" v-model = "selectedRecord.productName" :options="products">
+                  </b-form-select>
+                </b-form-group>
               </div>
               <div class = "col-md-12">
                  <b-form-group horizontal
@@ -55,16 +56,7 @@
                   <b-form-select id = "detailLicenseType" v-model = "selectedRecord.licenseType" :options="licenseType">
                   </b-form-select>
                 </b-form-group>
-              </div>
-              <div class = "col-md-12">
-                 <b-form-group horizontal
-                  label="Product:"
-                  label-class="text-sm-right"
-                  label-for="detailProduct">
-                  <b-form-select id = "detailProduct" v-model = "selectedRecord.productName" :options="products">
-                  </b-form-select>
-                </b-form-group>
-              </div>              
+              </div>                            
             </div>
           </div>
           <div class = "col-md-6 col-sm-6">
@@ -101,7 +93,7 @@
                   <b-form-input id="detailFreshsalesURL" v-model = "selectedRecord.freshsalesURL"></b-form-input>
                   </b-form-group>
               </div>
-              <div class = "col-md-12">
+              <div class = "col-md-12 customer-status">
                  <b-form-group horizontal
                   label="Customer Status:"
                   label-class="text-sm-right"
@@ -109,6 +101,15 @@
                   <b-form-select id = "detailCustomStatus" v-model = "selectedRecord.customerStatus" :options="customStatus">
                   </b-form-select>
                 </b-form-group>
+              </div>
+              <div class = "col-md-12">
+                 <b-form-group horizontal
+                  label="State:"
+                  label-class="text-sm-right"
+                  label-for="detailLicenseState">
+                  <b-form-select id = "detailLicenseState" v-model = "selectedRecord.licenseState" :options="licenseState">
+                  </b-form-select>
+                </b-form-group>                
               </div>
             </div>
           </div>
@@ -130,67 +131,26 @@
       </div>            
       <div class = "col-md-6 col-sm-6 col-xs-12 col-part-detail">
         <div class = "content-panel">
-          <div class = "row sub-title">License Status</div>
-          <div class = "row detail-panel">          
-            <div class = "col-md-12">
-              <b-form-group horizontal
-                label="Status:"
-                label-class="text-sm-right"
-                label-for="detailLicenseStatus">
-                  <b-form-select id = "detailLicenseStatus" v-model = "selectedRecord.licenseStatus" :options="licenseStatus" class="mb-3">
-                  </b-form-select>
-              </b-form-group>
+          <div class = "row sub-title">Invoices</div>
+            <div class = "row detail-panel">
+              <div class = "col-md-12">12/1/17: In-4087.pdf</div>
+              <div class = "col-md-12">12/1/17: In-4087.pdf</div>
+              <button type="button" class="btn btn-success btn-small form-group">Add</button>
             </div>
-            <div class = "col-md-12">
-              <b-form-group horizontal
-                label="State:"
-                label-class="text-sm-right"
-                label-for="detailLicenseState">
-                  <b-form-checkbox id="detailLicenseState"
-                      v-model = "selectedRecord.licenseState"
-                      value="accepted"
-                      unchecked-value="not_accepted">
-                      Archive
-                  </b-form-checkbox>
-              </b-form-group>
-            </div>          
-          </div>
         </div>
-      </div> 
+      </div>    
       <div class = "col-md-12 col-detail">
-        <div class = "row">
-          <div class = "col-md-4 col-sm-4 col-xs-12">
-            <div class = "content-panel">
-              <div class = "row sub-title">Invoices</div>
-              <div class = "row detail-panel">
-                <div class = "col-md-12">12/1/17: In-4087.pdf</div>
-                <div class = "col-md-12">12/1/17: In-4087.pdf</div>
-                <button type="button" class="btn btn-success btn-small form-group">Add</button>
-              </div>
-            </div>
-          </div>
-          <div class = "col-md-4 col-sm-4 col-xs-12">
-            <div class = "content-panel">
-              <div class = "row sub-title">Quotes</div>
-              <div class = "row detail-panel">
-                <div class = "col-md-12">12/1/17: In-4087.pdf</div>
-                <div class = "col-md-12">12/1/17: In-4087.pdf</div>
-                <button type="button" class="btn btn-success btn-small form-group">Add</button>
-              </div>
-            </div>
-          </div>
-          <div class = "col-md-4 col-sm-4 col-xs-12">
-            <div class = "content-panel">
-              <div class = "row sub-title">Purchase Orders</div>
-              <div class = "row detail-panel">
-                <div class = "col-md-12">12/1/17: In-4087.pdf</div>
-                <div class = "col-md-12">12/1/17: In-4087.pdf</div>
-                <button type="button" class="btn btn-success btn-small form-group">Add</button>
-              </div>
-            </div>
-          </div>
-        </div>        
-      </div>                
+        <div class = "row sub-title">Deal Notes</div>
+        <div class = "row detail-panel">          
+          <b-form-textarea id="textarea1" class = "form-group"
+                     v-model = "selectedRecord.dealNotes"
+                     placeholder="Enter something"
+                     :rows="3"
+                     :no-resize="true"
+                     :max-rows="3">
+          </b-form-textarea>          
+        </div>
+      </div>                  
       <div class = "col-md-12 col-detail">
         <div class = "row sub-title">Important Notes</div>
         <div class = "row detail-panel">          
@@ -237,8 +197,6 @@ export default {
             expireDate: '2018-01-01',      
             freshsalesURL: '',
             importantNotes: '',
-            licenseState: 'not_accepted',
-            licenseStatus: '',
             licenseType: '',
             licenseURL: '',
             license_id: '',
@@ -247,9 +205,9 @@ export default {
             userEMail: '',
             userFullName: '',
             userRegisteredTo: '',
-          }
-          
-          this.setEditFields(true);
+          }          
+          this.setEditFields(false);
+          $("#btnEdit").attr("disabled", "");
           return;
         }        
         if(this.records.length > 0)        
@@ -258,12 +216,7 @@ export default {
         if(this.selectedRecord.issueDate == null)
           this.selectedRecord.issueDate = "2018-01-02";
         if(this.selectedRecord.expireDate == null)
-          this.selectedRecord.expireDate = "2018-01-02";
-
-        if(this.selectedRecord.licenseState == 1)   
-          this.selectedRecord.licenseState = "accepted";
-        else
-          this.selectedRecord.licenseState = "not_accepted";
+          this.selectedRecord.expireDate = "2018-01-02";        
          
         if(this.selectedIndex == 0) 
           $(".btn-previous").attr("disabled", "");
@@ -286,7 +239,7 @@ export default {
         freshsalesURL: '',
         importantNotes: '',
         issueDate: null,
-        licenseState: 'not_accepted',
+        licenseState: '',
         licenseStatus: '',
         licenseType: '',
         licenseURL: '',
@@ -309,14 +262,15 @@ export default {
       ],
       selectedType: 'Enterprise',      
       licenseType: [
-        { value: 'Enterprise', text: 'Enterprise' },
-        { value: 'Basic', text: 'Basic' }
+        { value: '', text: 'N/A' },        
+        { value: 'evaluation', text: 'Evaluation' },        
+        { value: 'basic', text: 'Basic' },
+        { value: 'enterprise', text: 'Enterprise' },        
+        { value: 'eggplant', text: 'Eggplant' }
       ],
-      selectedLicenseStatus: 'TODO',
-      licenseStatus: [
-        { value: 'TODO', text: 'TODO' },
-        { value: 'Email Sent', text: 'Email Sent' },
-        { value: 'Multiple Emails', text: 'Multiple Emails' }
+      licenseState: [
+        { value: 'active', text: 'Active' },
+        { value: 'archive', text: 'Archive' }
       ],
       selectedProduct: 'bumblebee',
       products: [
@@ -326,8 +280,6 @@ export default {
         { value: 'firefly', text: 'Firefly' },
         { value: 'pangolin', text: 'Pangolin' }
       ],
-      renewStatus: 'Renewed',
-      licenseState: 'not_accepted',
       payableContent: ''
     }
   },
@@ -359,9 +311,11 @@ export default {
     },
     gotoPrevious() {
       this.selectedIndex--;
+      this.setEditFields(false);
     },
     gotoNext() {
       this.selectedIndex++;
+      this.setEditFields(false);
     }
   }
 }

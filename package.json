@@ -23,6 +23,7 @@
     "jquery-sparkline": "^2.4.0",
     "lodash": "^4.17.4",
     "moment": "^2.19.1",
+    "mysql": "^2.15.0",
     "vue": "^2.5.2",
     "vue-bootstrap-datetimepicker": "^4.1.2",
     "vue-ls": "^2.3.3",

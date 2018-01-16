@@ -14,6 +14,7 @@ const debug = process.env.NODE_ENV !== 'production'
 const state = {
   loading: 'none',  
   loadingText: 'Loading...',  
+  selectedIndex: -1,
   records: []
 }
 

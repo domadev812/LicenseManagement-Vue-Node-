@@ -10,9 +10,6 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 400;
   margin: 10px 0;
 }
-table, th {
-  text-align: center !important;  
-}
 table {
   border:1px solid #ccc;
 }
@@ -22,6 +19,10 @@ tr{
 .page-title {
   text-align: center;
   padding-bottom: 20px;
+}
+
+.page-title img{
+  width: 500px;
 }
 .panel-footer {
   text-align: right;
@@ -35,6 +36,9 @@ tr{
   padding: 15px;
   border: 1px solid #ddd;
   border-top: 0;
+}
+.filter-row p{
+  margin-bottom: 0.3rem;
 }
 .filter-panel{
   background-color: rgb(114, 202, 95) !important;  
@@ -121,9 +125,7 @@ tr{
   margin: 20px 0;
   padding: 0px 20px;  
 }
-.custom-checkbox {
-  margin-top: 6px;
-}
+
 .form-group {
   margin-bottom: 0.4rem !important;
 }
@@ -186,4 +188,11 @@ tr{
 .loading-text{
   text-align: center;
 }
+.customer-status label{
+  font-size:13px;
+  margin-top: 2px;
+}
 
+#minDealValue, #maxDealValue{
+  padding: 5px !important;
+}

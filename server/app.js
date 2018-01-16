@@ -63,10 +63,26 @@ function getNewRecords(maxID) {
     var newRecords = [];
     result.forEach(function(item){
       var record = new Array();
-      var keys = Object.keys(item);
+      if(item.productName == "eggplant-alm" || item.productName == "eggplant") {
+        item.licenseType = "eggplant";
+        item.productName = "eggplant";
+        if(item.userFullName == null || item.userFullName == '')
+          item.userFullName = 'Eggplant';
+        if(item.userEMail == null || item.userEMail == '')
+          item.userEMail = 'no-reply@eggplant.com';
+        if(item.userCompany == null || item.userCompany == '')
+          item.userCompany = 'Testplant';
+      } else if(item.userRegisteredTo == "evaluation" || item.userRegisteredTo == "Evaluation")
+       item.licenseType = "evaluation";
+      else if(item.userRegisteredTo == "paid" || item.userRegisteredTo == "Paid")
+        item.licenseType = "basic";
+      else if(item.userRegisteredTo == "enterprise" || item.userRegisteredTo == "Enterprise")
+        item.licenseType = "enterprise";
+      else item.licenseType = "";
+      var keys = Object.keys(item);      
       keys.forEach(function(key){
         record.push(item[key]);
-      });      
+      });            
       newRecords.push(record);
     })  
     if(newRecords.length == 0) {
@@ -74,10 +90,12 @@ function getNewRecords(maxID) {
       return;
     }
     // self.res.send(result);
-    var sql = "INSERT INTO licenses (license_id, userFullName, userEMail, userCompany, userRegisteredTo, productName) VALUES ?";
+    console.log(newRecords[0]);
+    var sql = "INSERT INTO licenses (license_id, userFullName, userEMail, userCompany, userRegisteredTo, productName, licenseType) VALUES ?";
     connectionWrite.query(sql, [newRecords], function (err, result) {      
       if (err) {
-        console.log(this.sql);
+        // console.log(this.sql);
+        console.log(err);
         return;
       }
       console.log("Number of records inserted: " + result.affectedRows);
