@@ -56,7 +56,15 @@
                   <b-form-select id = "detailLicenseType" v-model = "selectedRecord.licenseType" :options="licenseType">
                   </b-form-select>
                 </b-form-group>
-              </div>                            
+              </div> 
+              <div class = "col-md-12">
+                 <b-form-group horizontal
+                  label="Deal Value:"
+                  label-class="text-sm-right"
+                  label-for="detailDealValue">
+                  <b-form-input type = "number" id="detailDealValue"  v-model = "selectedRecord.dealValue"></b-form-input>
+                </b-form-group>
+              </div>                           
             </div>
           </div>
           <div class = "col-md-6 col-sm-6">
