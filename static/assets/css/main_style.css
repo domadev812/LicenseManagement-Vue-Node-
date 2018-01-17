@@ -20,10 +20,15 @@ tr{
   text-align: center;
   padding-bottom: 20px;
 }
-
 .page-title img{
   width: 500px;
 }
+@media (max-width: 600px){
+  .page-title img{
+    width: 70%;
+  }
+}
+
 .panel-footer {
   text-align: right;
 }

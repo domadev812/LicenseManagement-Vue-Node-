@@ -9,11 +9,11 @@
             <div class = "col-md-3 col-sm-4">
               <p>License Expiration Date Range </p>
               <div class = "row">
-                <div class = "col-sm-6 col-md-6">
-                  <b-form-input id="startExpireDate" :type="'date'" v-model="startExpireDate"></b-form-input>                            
+                <div class = "col-sm-8 col-md-6">
+                  <b-form-input  :type="'date'" v-model="startExpireDate"></b-form-input>                            
                 </div>                
-                <div class = "col-sm-6 col-md-6">
-                  <b-form-input id="endExpireDate" :type="'date'" v-model="endExpireDate"></b-form-input>              
+                <div class = "col-sm-8 col-md-6">
+                  <b-form-input :type="'date'" v-model="endExpireDate"></b-form-input>              
                 </div>
               </div>
             </div> 
@@ -102,10 +102,10 @@
                   </div>
                   <p style = "margin-top:30px;">Deal Value: </p>
                   <div class = "row">
-                    <div class = "col-md-4 col-sm-4">
+                    <div class = "col-md-5 col-sm-5">
                       <b-form-input id="minDealValue"  v-model = "minDeal"></b-form-input>
                     </div>
-                    <div class = "col-md-4 col-sm-4">
+                    <div class = "col-md-5 col-sm-5">
                       <b-form-input id="maxDealValue"  v-model = "maxDeal"></b-form-input>
                     </div>
                   </div>
@@ -166,7 +166,7 @@
           <tr v-for="n in endIndex - startIndex + 1" @click="vieweDetail(n - 1)">
             <td>{{records[n + startIndex - 1].license_id}}</td>            
             <td>{{capitalize(records[n + startIndex - 1].userFullName)}}</td>            
-            <td>{{records[n + startIndex - 1].userEMail}}</td>
+            <td>{{lowercase(records[n + startIndex - 1].userEMail)}}</td>
             <td>{{capitalize(records[n + startIndex - 1].userCompany)}}</td>            
             <td>{{capitalize(records[n + startIndex - 1].productName)}}</td>            
             <td></td>
@@ -191,7 +191,9 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
+import Datepicker from 'vuejs-datepicker'
 
+import moment from 'moment'
 const LoadingModal = () => import(/* webpackChunkName: "Content" */ './Loading.vue')
 export default {
   name: 'Content',
@@ -200,12 +202,15 @@ export default {
       loading: 'getLoadingFlag'
     })
   },
-  components: {LoadingModal},
+  components: {
+    LoadingModal,
+    Datepicker
+  },
   data () {
     return {
       msg: 'Welcome to Your Vue.js App',
       totalRecords: 67,
-      perPage: 10,
+      perPage: 50,
       totalPages: 1,
       currentPage: 1,
       startIndex: 0,
@@ -232,10 +237,11 @@ export default {
   },
   created() {       
     this.fetchNewRecords();
-    let d = new Date();
-    this.startExpireDate = d.getFullYear() + "-0" + (d.getMonth() + 1) + "-" + d.getDate();
-    console.log(this.startExpireDate);
-    console.log(this.endExpireDate);
+    let today = new Date();    
+    this.startExpireDate = moment(today).format("YYYY-MM-DD");   
+    var endDate = new Date(today);
+    endDate.setDate(endDate.getDate() + 30);         
+    this.endExpireDate = moment(endDate).format("YYYY-MM-DD");   
   },
   watch: {
     currentPage: {
@@ -264,7 +270,7 @@ export default {
           this.totalRecords = this.records.length;
           this.totalPages = Math.ceil(this.totalRecords / this.perPage);               
           this.currentPage = 1;
-          if(this.totalRecords > 10) this.endIndex = 9;                                  
+          if(this.totalRecords > this.perPage) this.endIndex = this.perPage - 1;                                  
           this.$store.dispatch('setLoadingFlag', 'none');
           self.$ls.set('records', this.records);
           this.$store.dispatch('setRecords', this.records);          
@@ -276,7 +282,14 @@ export default {
     },
     capitalize: function(str) {
       if(str == null || str == '') return '';
-      return str.charAt(0).toUpperCase() + str.slice(1);
+      let arrName = str.split(" ");
+      str = "";
+      for(let i = 0; i < arrName.length; i++)
+        str += arrName[i].charAt(0).toUpperCase() + arrName[i].slice(1) + " "; 
+      return str;
+    },
+    lowercase: function(str) {
+      return str.toLowerCase();
     }
   }
 }
