@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Content from '@/components/Content'
 import ViewDetail from '@/components/ViewDetail'
+import Setting from '@/components/Setting'
 Vue.use(Router)
 
 export default new Router({
@@ -10,6 +11,11 @@ export default new Router({
       path: '/',
       name: 'Content',
       component: Content
+    },
+    {
+      path: '/setting',
+      name: 'Setting',
+      component: Setting
     },
     {
       path: '/viewdetail/:id',

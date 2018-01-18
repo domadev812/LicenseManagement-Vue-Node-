@@ -9,13 +9,11 @@ const state = {
 }
 
 const actions = {
-  fetchNewRecords ({commit}) {
+  importLicenseData ({commit}) {
     return new Promise((resolve, reject) => {
-      sendGet('/getNewRecords', null, null)
+      sendGet('/importLicenseData', null, null)
         .then((response) => {
-          commit('FETCH_NEW_RECORDS', response)
-          let items = clone(state.newRecords)
-          resolve(items)
+          resolve(response)
         })
         .catch((error) => {
           reject(error)
@@ -43,6 +41,29 @@ const actions = {
           console.log(response);
         })
         .catch((error) => {          
+          reject(error)
+        })
+    })
+  },
+  updateLicenseState ({commit, dispatch, getters}, payload) {    
+    return new Promise((resolve, reject) => {
+      sendPutJSON('/updateLicenseState', payload)
+        .then((response) => {          
+          resolve(response)
+          console.log(response);
+        })
+        .catch((error) => {          
+          reject(error)
+        })
+    })
+  },
+  deleteSQLData ({commit, dispatch, getters}, payload) {
+    return new Promise((resolve, reject) => {
+      sendDelete('/deleteSQLData', null)
+        .then((response) => {
+          resolve(response)
+        })
+        .catch((error) => {
           reject(error)
         })
     })

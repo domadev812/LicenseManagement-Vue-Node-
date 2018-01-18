@@ -43,7 +43,7 @@ app.get('/', function(req, res) {
     res.sendFile(path.resolve(__dirname, '../dist/index.html')); 
 });
 
-app.get('/getNewRecords', function(req, res) {       
+app.get('/importLicenseData', function(req, res) {       
   this.res = res;
   getMaxID();      
 });
@@ -113,6 +113,34 @@ app.put('/updateRecord', function(req, res) {
   });  
 });
 
+app.options('/updateLicenseState', function(req, res) {        
+  res.header('Access-Control-Allow-Origin', 'http://localhost:8081');  
+  res.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, PUT, OPTIONS, HEAD');
+  res.send();  
+});
+
+app.put('/updateLicenseState', function(req, res) {  
+  let data = req.body;
+  let sql = "update licenses set licenseState = '" + data.licenseState + "' where license_id = " + data.license_id;
+  connectionWrite.query(sql, function (err, result) {
+    if (err) {
+      res.send({'error': true});
+      return;
+    }
+    res.send({'error': false});
+  });
+});
+app.delete('/deleteSQLData', function(req, res) {    
+  let sql = "TRUNCATE licenses";
+  connectionWrite.query(sql, function (err, result) {
+    if (err) {
+      res.send({'error': true});
+      return;
+    }
+    res.send({'error': false});
+  });
+});
+
 function getMaxID() {
   connectionWrite.query("SELECT MAX(license_id) as licenseID from licenses", function(err, result) {
     if (err) throw err;      
@@ -151,22 +179,19 @@ function getNewRecords(maxID) {
         record.push(item[key]);
       });            
       newRecords.push(record);
-    })  
+    })
     if(newRecords.length == 0) {
-      fetchRecords();
+      self.res.send({'error': false, 'numbers': 0});
       return;
     }
-    // self.res.send(result);
-    console.log(newRecords[0]);
     var sql = "INSERT INTO licenses (license_id, userFullName, userEMail, userCompany, userRegisteredTo, productName, licenseType) VALUES ?";
     connectionWrite.query(sql, [newRecords], function (err, result) {      
       if (err) {
-        // console.log(this.sql);
-        console.log(err);
+        self.res.send({'error': true});
         return;
       }
-      console.log("Number of records inserted: " + result.affectedRows);
-      fetchRecords();
+      self.res.send({'error': false, 'numbers': result.affectedRows});
+      console.log("Number of records inserted: " + result.affectedRows);      
     });
   }); 
 }

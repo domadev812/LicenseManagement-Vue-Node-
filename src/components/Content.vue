@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">    
-    <div class = 'page-title'> <img src = "https://www.agiletestware.com/images/agiletestware_logo.png"></div>
+    <div class = 'page-title'> <img src = "https://www.agiletestware.com/images/agiletestware_logo.png"><i class = "fa fa-cog fa-3x setting" @click="gotoSetting()"></i></div>
     <div class="panel-group">
       <div class="panel panel-default">                
         <b-card v-b-toggle.collapse1 variant="primary" class = "filter-panel">Filter Options<i class="fa fa-angle-double-down filter-condition-arrow"></i></b-card >
@@ -152,6 +152,7 @@
       <table class="table table-striped table-hover">
         <thead>
           <tr style = "background: rgb(114, 202, 95);color: white;font-size: 16px;">
+            <th style="width: 30px;"></th>
             <th @click="sortRecords('license_id')">ID <i class = "fa" v-bind:class = "[this.sortCondition.field == 'license_id' ? [this.sortCondition.order == 'ASC' ? 'fa-angle-down' : 'fa-angle-up'] : '']"></i></th>
             <th @click="sortRecords('userFullName')">Name <i class = "fa" v-bind:class = "[this.sortCondition.field == 'userFullName' ? [this.sortCondition.order == 'ASC' ? 'fa-angle-down' : 'fa-angle-up'] : '']"></i></th>
             <th @click="sortRecords('userEMail')">Email <i class = "fa" v-bind:class = "[this.sortCondition.field == 'userEMail' ? [this.sortCondition.order == 'ASC' ? 'fa-angle-down' : 'fa-angle-up'] : '']"></i></th>
@@ -160,13 +161,13 @@
             <th @click="sortRecords('dealValue')">Deal Value <i class = "fa" v-bind:class = "[this.sortCondition.field == 'dealValue' ? [this.sortCondition.order == 'ASC' ? 'fa-angle-down' : 'fa-angle-up'] : '']"></i></th>
             <th @click="sortRecords('issueDate')">Issue Date <i class = "fa" v-bind:class = "[this.sortCondition.field == 'issueDate' ? [this.sortCondition.order == 'ASC' ? 'fa-angle-down' : 'fa-angle-up'] : '']"></i></th>
             <th @click="sortRecords('expireDate')">Expire Date <i class = "fa" v-bind:class = "[this.sortCondition.field == 'expireDate' ? [this.sortCondition.order == 'ASC' ? 'fa-angle-down' : 'fa-angle-up'] : '']"></i></th>
-            <th @click="sortRecords('updateDate')">Updated Date <i class = "fa" v-bind:class = "[this.sortCondition.field == 'updateDate' ? [this.sortCondition.order == 'ASC' ? 'fa-angle-down' : 'fa-angle-up'] : '']"></i></th>
-            <th style="width: 30px;"></th>
+            <th @click="sortRecords('updateDate')">Updated Date <i class = "fa" v-bind:class = "[this.sortCondition.field == 'updateDate' ? [this.sortCondition.order == 'ASC' ? 'fa-angle-down' : 'fa-angle-up'] : '']"></i></th>            
             <th style="width: 100px;"></th>
           </tr>
         </thead>
         <tbody v-if = "records.length > 0">                 
           <tr v-for="n in endIndex - startIndex + 1">
+            <td class = "expire-state"><i class = "fa fa-circle" v-bind:class="[records[n + startIndex - 1].expireState == 0 ? 'expired' : [records[n + startIndex - 1].expireState == 1 ? 'expire-soon' : 'expire-after']]"></i></td>
             <td>{{records[n + startIndex - 1].license_id}}</td>            
             <td>{{capitalize(records[n + startIndex - 1].userFullName)}}</td>            
             <td>{{lowercase(records[n + startIndex - 1].userEMail)}}</td>
@@ -175,11 +176,10 @@
             <td>{{records[n + startIndex - 1].dealValue}}</td>
             <td>{{records[n + startIndex - 1].issueDate}}</td>            
             <td>{{records[n + startIndex - 1].expireDate}}</td>        
-            <td></td>
-            <td class = "expire-state"><i class = "fa fa-circle" v-bind:class="[records[n + startIndex - 1].expireState == 0 ? 'expired' : [records[n + startIndex - 1].expireState == 1 ? 'expire-soon' : 'expire-after']]"></i></td>
+            <td></td>            
             <td class = "edit-column">
-              <i class = "fa fa-pencil edit" @click="vieweDetail(n - 1)"></i>
-              <i class = "fa" v-bind:class="[records[n + startIndex - 1].licenseState == 'active' ? 'fa-eye-slash active-state' : 'fa-eye archive']" @click="setArchive(records[n + startIndex - 1].licenseState)"></i>
+              <i class = "fa fa-pencil edit" @click="vieweDetail(n + startIndex - 1)"></i>
+              <i class = "fa" v-bind:class="[records[n + startIndex - 1].licenseState == 'active' ? 'fa-eye-slash active-state' : 'fa-eye archive']" @click="setArchive(n + startIndex - 1)"></i>
             </td>
           </tr>                     
         </tbody>
@@ -218,7 +218,6 @@ export default {
   },
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App',
       totalRecords: 67,
       perPage: 50,
       totalPages: 1,
@@ -270,10 +269,28 @@ export default {
     vieweDetail(index) {
       this.$router.push({name: 'ViewDetail', params: { id: index + 1}})
     },
-    setArchive(licenseState){
-      if(licenseState == 'active') {
-
-      }  
+    gotoSetting() {
+      this.$router.push({name: 'Setting'})
+    },
+    setArchive(index){       
+      let self = this;
+      let selectedRecord = this.records[index];  
+      if(selectedRecord.licenseState == 'active') selectedRecord.licenseState = 'archive';        
+      else selectedRecord.licenseState = 'active';
+      
+      this.$store.dispatch('setLoadingFlag', 'flex');
+      this.$store.dispatch('setLoadingText', 'Updating...');
+      this.$store.dispatch('updateLicenseState', {"licenseState": selectedRecord.licenseState, "license_id": selectedRecord.license_id})
+        .then((response) => {          
+          self.$store.dispatch('setLoadingFlag', 'none');
+          self.$ls.set('records', this.records);          
+        }).catch((error) => {    
+          this.$store.dispatch('setLoadingFlag', 'none');
+          console.log('Error');
+          if(selectedRecord.licenseState == 'active') selectedRecord.licenseState = 'archive';        
+          else selectedRecord.licenseState = 'active';    
+        }
+      )      
     },
     initFilterComponents() {
       if(this.filterCondition == null) return;

@@ -32,7 +32,16 @@ tr{
     width: 70%;
   }
 }
-
+.setting{
+  position: absolute;
+  right: 50px;
+  top: 50px;  
+  color: #72ca5e;
+}
+.setting:hover{
+  color: #399424;
+  cursor: pointer;
+}
 .panel-footer {
   text-align: right;
 }
@@ -260,13 +269,26 @@ tr{
 }
 
 .expire-state .expire-soon{
-  color: yellow;
+  color: #9d08ca;
 }
 
 .expire-state .expired{
-  color: red;
+  color: #e65b5b;
 }
 
 .expire-state .expire-after{
-  color: green;
+  color: #359c1d;
+}
+
+.btn-setting{
+  width: 300px;  
+  margin: auto;
+  margin-top: 50px;
+}
+
+@media (max-width: 500px){
+  .btn-setting{
+    width: 60%;
+    margin-top: 30px;
+  }
 }
