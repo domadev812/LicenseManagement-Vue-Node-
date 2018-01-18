@@ -24,7 +24,7 @@ const actions = {
   },
   fetchRecords ({commit}, payload) {    
     return new Promise((resolve, reject) => {      
-      sendGet('/getRecords/' + JSON.stringify(payload), null)
+      sendGet('/getRecords/' + JSON.stringify(payload.filterCondition) + "/" + JSON.stringify(payload.sortCondition), null)
         .then((response) => {
           commit('FETCH_NEW_RECORDS', response)
           let items = clone(state.newRecords)

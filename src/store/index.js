@@ -15,6 +15,11 @@ const state = {
   loading: 'none',  
   loadingText: 'Loading...',  
   selectedIndex: -1,
+  filterCondition: null,
+  sortCondition:{
+    "field": "license_id",
+    "order": "ASC"
+  },
   records: []
 }
 

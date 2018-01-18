@@ -13,6 +13,10 @@ h1, h2, h3, h4, h5, h6 {
 table {
   border:1px solid #ccc;
 }
+.table td{
+  padding: 4px !important;
+  vertical-align: middle !important;
+}
 tr{
   cursor: pointer;
 }
@@ -243,4 +247,26 @@ tr{
 .edit-column .archive{
   background: #72ca5e;
   color: #ffffff;
+}
+
+.expire-state{
+  padding: 4px !important;
+}
+
+.expire-state i{
+  padding: 8px;  
+  border-radius: 7px;
+  font-size: 20px;  
+}
+
+.expire-state .expire-soon{
+  color: yellow;
+}
+
+.expire-state .expired{
+  color: red;
+}
+
+.expire-state .expire-after{
+  color: green;
 }

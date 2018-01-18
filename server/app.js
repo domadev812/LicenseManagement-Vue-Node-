@@ -14,6 +14,30 @@ app.use(cors())
 app.use(express.static(path.join(__dirname, '../dist')));
 app.use("/", express.static(__dirname + "/"));
 
+connectionRead = mysql.createConnection({
+  host     : 'agiletestware.cni62heuz5ld.us-west-2.rds.amazonaws.com',
+  user     : 'readonly',
+  password : '!yX<9J~e',
+  database : 'license4jdb'
+});
+
+connectionWrite = mysql.createConnection({
+  host     : 'licensetool.cukwihlqrtiq.us-east-1.rds.amazonaws.com',
+  user     : 'agiletestware82',
+  password : 'Goliath1!',
+  database : 'licensetool'
+});
+
+connectionRead.connect(function(err) {
+  if (err) throw err;
+  console.log("Connected Readonly Database!");  
+});
+
+connectionWrite.connect(function(err) {
+  if (err) throw err;
+  console.log("Connected Writeable Database!");  
+});
+
 // Desktop requests
 app.get('/', function(req, res) {    
     res.sendFile(path.resolve(__dirname, '../dist/index.html')); 
@@ -24,12 +48,39 @@ app.get('/getNewRecords', function(req, res) {
   getMaxID();      
 });
 
-app.get('/getRecords/:filterCondition', function(req, res) { 
+app.get('/getRecords/:filterCondition/:sortCondition', function(req, res) { 
   res.header('Access-Control-Allow-Origin', 'http://localhost:8081');  
   res.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, PUT, OPTIONS, HEAD');     
-  let data = req.params.filterCondition;
-   
-  res.send({"error": false});  
+  let filter = JSON.parse(req.params.filterCondition);  
+  let sort = JSON.parse(req.params.sortCondition);    
+  let sql = "SELECT * FROM licenses";
+  if(filter != null) {
+    sql += " where ";  
+    if(filter.products.length > 0)
+      sql += "productName in ('" + filter.products.join("','") + "') and ";  
+    if(filter.licenseType.length > 0)
+      sql += "licenseType in ('" + filter.licenseType.join("','") + "') and ";
+    if(filter.customerStatus.length > 0)
+      sql += "customerStatus in ('" + filter.customerStatus.join("','") + "') and ";
+    if(!filter.archive)
+      sql += "licenseState = 'active' and ";
+    sql += "dealValue >= " + filter.minDeal + " and dealValue <= " + filter.maxDeal;
+  }  
+  sql += " ORDER BY " + sort.field + " " + sort.order;  
+  connectionWrite.query(sql, function(err, result) {
+    if(err) {
+      console.log("Error");
+      return;
+    }
+    result.forEach(function(item, index){
+      item.accountsPayable = item.accountsPayable != null ? item.accountsPayable.toString('binary') : "";
+      item.dealNotes = item.dealNotes != null ? item.dealNotes.toString('binary') : "";
+      item.importantNotes = item.importantNotes != null ? item.importantNotes.toString('binary') : "";
+      item.expireState = index % 3;
+    });    
+    console.log("Result: " + result.length); 
+    res.send(result);
+  });  
 });
 
 app.options('/updateRecord', function(req, res) {        
@@ -60,30 +111,6 @@ app.put('/updateRecord', function(req, res) {
     }
     res.send({'error': false});
   });  
-});
-
-connectionRead = mysql.createConnection({
-  host     : 'agiletestware.cni62heuz5ld.us-west-2.rds.amazonaws.com',
-  user     : 'readonly',
-  password : '!yX<9J~e',
-  database : 'license4jdb'
-});
-
-connectionWrite = mysql.createConnection({
-  host     : 'licensetool.cukwihlqrtiq.us-east-1.rds.amazonaws.com',
-  user     : 'agiletestware82',
-  password : 'Goliath1!',
-  database : 'licensetool'
-});
-
-connectionRead.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected Readonly Database!");  
-});
-
-connectionWrite.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected Writeable Database!");  
 });
 
 function getMaxID() {
@@ -152,15 +179,15 @@ function fetchRecords() {
       return;
     }  
     
-    result.forEach(function(item){
+    result.forEach(function(item, index){
       item.accountsPayable = item.accountsPayable != null ? item.accountsPayable.toString('binary') : "";
       item.dealNotes = item.dealNotes != null ? item.dealNotes.toString('binary') : "";
-      item.importantNotes = item.importantNotes != null ? item.importantNotes.toString('binary') : "";
+      item.importantNotes = item.importantNotes != null ? item.importantNotes.toString('binary') : "";      
     });    
     self.res.header('Access-Control-Allow-Origin', 'http://localhost:8081');
     self.res.header('Access-Control-Allow-Credentials', true);
     self.res.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, PUT, OPTIONS, HEAD');
-    self.res.send(result);
+    
   });
 }
 

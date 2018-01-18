@@ -11,5 +11,11 @@ export default {
   },
   SET_SELECTED_INDEX (state, index) {
     state.selectedIndex = index
+  },
+  SET_FILTER_CONDITION (state, filterCondition) {
+    state.filterCondition = filterCondition
+  },
+  SET_SORT_CONDITION (state, sortCondition) {
+    state.sortCondition = sortCondition
   }
 }
