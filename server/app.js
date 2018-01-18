@@ -1,6 +1,7 @@
 var express    = require('express'),
     app        = express(),
     http       = require('http').Server(app),
+    cors       = require('cors'),
     bodyParser = require("body-parser"),
     path = require('path'),
     mysql      = require('mysql');
@@ -9,6 +10,7 @@ var connectionRead, connectionWrite;
 var res;
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(cors())
 app.use(express.static(path.join(__dirname, '../dist')));
 app.use("/", express.static(__dirname + "/"));
 
@@ -17,9 +19,39 @@ app.get('/', function(req, res) {
     res.sendFile(path.resolve(__dirname, '../dist/index.html')); 
 });
 
-app.get('/getNewRecords', function(req, res) {    
+app.get('/getNewRecords', function(req, res) {       
   this.res = res;
   getMaxID();      
+});
+
+app.options('/updateRecord', function(req, res) {        
+  res.header('Access-Control-Allow-Origin', 'http://localhost:8081');
+  //res.header('Access-Control-Allow-Credentials', true);
+  res.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, PUT, OPTIONS, HEAD');
+  res.send();  
+});
+
+app.put('/updateRecord', function(req, res) {      
+  let data = req.body;
+  let sql = "update licenses set userCompany = '" + data.userCompany + "', ";
+  sql += "licenseType = '" + data.licenseType + "', ";
+  sql += "dealValue = '" + data.dealValue + "', ";
+  sql += "userFullName = '" + data.userFullName + "', ";
+  sql += "userEMail = '" + data.userEMail + "', ";
+  sql += "licenseURL = '" + data.licenseURL + "', ";
+  sql += "freshsalesURL = '" + data.freshsalesURL + "', ";
+  sql += "customerStatus = '" + data.customerStatus + "', ";
+  sql += "licenseState = '" + data.licenseState + "', ";
+  sql += "accountsPayable = '" + data.accountsPayable + "', ";
+  sql += "dealNotes = '" + data.dealNotes + "', ";
+  sql += "importantNotes = '" + data.importantNotes + "' where license_id = " + data.license_id;
+  connectionWrite.query(sql, function (err, result) {
+    if (err) {
+      res.send({'error': true});
+      return;
+    }
+    res.send({'error': false});
+  });  
 });
 
 connectionRead = mysql.createConnection({
@@ -110,7 +142,13 @@ function fetchRecords() {
     if (err) {
       console.log(this.sql);
       return;
-    }      
+    }  
+    
+    result.forEach(function(item){
+      item.accountsPayable = item.accountsPayable != null ? item.accountsPayable.toString('binary') : "";
+      item.dealNotes = item.dealNotes != null ? item.dealNotes.toString('binary') : "";
+      item.importantNotes = item.importantNotes != null ? item.importantNotes.toString('binary') : "";
+    });    
     self.res.header('Access-Control-Allow-Origin', 'http://localhost:8081');
     self.res.header('Access-Control-Allow-Credentials', true);
     self.res.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, PUT, OPTIONS, HEAD');

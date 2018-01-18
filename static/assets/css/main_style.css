@@ -204,3 +204,43 @@ tr{
 #minDealValue, #maxDealValue{
   padding: 5px !important;
 }
+
+.vdp-datepicker input{
+  text-align: center;
+  padding: 5px 12px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  color: #495057;
+}
+
+.detail-date input{
+  text-align: left;
+  background: #e9ecef;
+  width: 100%;
+}
+
+.edit-column{
+  padding: 4px !important;
+}
+
+.edit-column i{
+  padding: 8px;  
+  border-radius: 7px;
+  color: #FFF;
+}
+.edit-column .edit{    
+  background: blue;  
+}
+
+.edit-column .edit:hover{
+  background: #9fb2d8;
+}
+.edit-column .active-state{  
+  background: #5d4c0a;  
+  color: #ffffff;
+}
+
+.edit-column .archive{
+  background: #72ca5e;
+  color: #ffffff;
+}

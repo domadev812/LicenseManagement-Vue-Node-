@@ -1,4 +1,4 @@
-import {sendGet, sendPut, sendPost, sendDelete} from '../../config/api'
+import {sendGet, sendPut, sendPost, sendDelete, sendPutJSON} from '../../config/api'
 import clone from 'lodash/clone'
 import filter from 'lodash/filter'
 import orderBy from 'lodash/orderBy'
@@ -10,7 +10,6 @@ const state = {
 
 const actions = {
   fetchNewRecords ({commit}) {
-    console.log('Fetch New Records');
     return new Promise((resolve, reject) => {
       sendGet('/getNewRecords', null, null)
         .then((response) => {
@@ -19,6 +18,18 @@ const actions = {
           resolve(items)
         })
         .catch((error) => {
+          reject(error)
+        })
+    })
+  },
+  updateRecord ({commit, dispatch, getters}, payload) {    
+    return new Promise((resolve, reject) => {
+      sendPutJSON('/updateRecord', payload)
+        .then((response) => {          
+          resolve(response)
+          console.log(response);
+        })
+        .catch((error) => {          
           reject(error)
         })
     })

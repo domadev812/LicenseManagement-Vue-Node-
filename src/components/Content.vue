@@ -10,10 +10,11 @@
               <p>License Expiration Date Range </p>
               <div class = "row">
                 <div class = "col-sm-8 col-md-6">
-                  <b-form-input  :type="'date'" v-model="startExpireDate"></b-form-input>                            
+                  <!-- <b-form-input  :type="'date'" v-model="startExpireDate"></b-form-input>                             -->
+                  <datepicker :format = "customFormatter" v-model = "startExpireDate"></datepicker>
                 </div>                
                 <div class = "col-sm-8 col-md-6">
-                  <b-form-input :type="'date'" v-model="endExpireDate"></b-form-input>              
+                  <datepicker :format = "customFormatter" v-model = "endExpireDate"></datepicker>  
                 </div>
               </div>
             </div> 
@@ -160,10 +161,11 @@
             <th>Issue Date <i class = "fa"></i></th>
             <th>Expire Date <i class = "fa"></i></th>
             <th>Updated Date <i class = "fa"></i></th>
+            <th style="width: 100px;"></th>
           </tr>
         </thead>
         <tbody v-if = "records.length > 0">                 
-          <tr v-for="n in endIndex - startIndex + 1" @click="vieweDetail(n - 1)">
+          <tr v-for="n in endIndex - startIndex + 1">
             <td>{{records[n + startIndex - 1].license_id}}</td>            
             <td>{{capitalize(records[n + startIndex - 1].userFullName)}}</td>            
             <td>{{lowercase(records[n + startIndex - 1].userEMail)}}</td>
@@ -173,11 +175,15 @@
             <td>{{records[n + startIndex - 1].issueDate}}</td>            
             <td>{{records[n + startIndex - 1].expireDate}}</td>        
             <td></td>
+            <td class = "edit-column">
+              <i class = "fa fa-pencil edit" @click="vieweDetail(n - 1)"></i>
+              <i class = "fa" v-bind:class="[records[n + startIndex - 1].licenseState == 'active' ? 'fa-eye-slash active-state' : 'fa-eye archive']" @click="setArchive(records[n + startIndex - 1].licenseState)"></i>
+            </td>
           </tr>                     
         </tbody>
         <tbody v-else>
           <tr>
-            <td colspan="9">
+            <td colspan="10">
               No Records
             </td>
           </tr>
@@ -226,7 +232,7 @@ export default {
       evaluation: 'accepted',  
       basic: 'accepted',
       enterprise: 'accepted',
-      showArchived: 'not_accepted',      
+      showArchived: 'accepted',      
       new_customer: 'accepted',
       renewal_customer: 'accepted',
       lost_customer: 'accepted',
@@ -259,6 +265,11 @@ export default {
     vieweDetail(index) {
       this.$router.push({name: 'ViewDetail', params: { id: index + 1}})
     },
+    setArchive(licenseState){
+      if(licenseState == 'active') {
+
+      }  
+    },
     fetchNewRecords: function () {   
       let self = this;
       this.$store.dispatch('setLoadingFlag', 'flex');
@@ -289,7 +300,13 @@ export default {
       return str;
     },
     lowercase: function(str) {
-      return str.toLowerCase();
+      if(str != null)
+        return str.toLowerCase();
+      else  
+        return "";
+    },
+    customFormatter(date) {
+      return moment(date).format('MM-DD-YYYY');
     }
   }
 }

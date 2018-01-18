@@ -36,7 +36,7 @@
                   label="Issue Date:"
                   label-class="text-sm-right"
                   label-for="detailIssueDate">
-                  <b-form-input id="detailIssueDate" disabled :type="'date'" v-model = "selectedRecord.issueDate"></b-form-input>
+                  <datepicker :format = "customFormatter" class="detail-date" v-model = "selectedRecord.issueDate"></datepicker>
                 </b-form-group>
               </div>
               <div class = "col-md-12">
@@ -44,7 +44,7 @@
                   label="Expiry Date:"
                   label-class="text-sm-right"
                   label-for="detailExpireDate">
-                  <b-form-input id="detailExpireDate" disabled :type="'date'" v-model = "selectedRecord.expireDate"></b-form-input>
+                  <datepicker :format = "customFormatter" class="detail-date" v-model = "selectedRecord.expireDate"></datepicker>
                 </b-form-group>
               </div>              
               <div class = "col-md-12">
@@ -188,6 +188,8 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
+import Datepicker from 'vuejs-datepicker'
+import moment from 'moment'
 
 export default {
   name: 'ViewDetail',
@@ -197,10 +199,16 @@ export default {
     let self = this;
     $(document).ready(function(){      
       self.selectedIndex = self.$route.params.id - 1;    
+      // $(".detail-date").attr("disabled", "");    
+      $(".detail-date input").attr("disabled", "");  
+      // $(".detail-date:even input").attr("disabled", "");
       self.setEditFields(false);      
     });    
   },
   computed: {
+  },
+  components: {
+    Datepicker
   },
   watch: {
     selectedIndex: {      
@@ -223,26 +231,28 @@ export default {
             userRegisteredTo: '',
           }          
           this.setEditFields(false);
-          $("#btnEdit").attr("disabled", "");
+          $("#btnEdit").attr("disabled", "");          
           return;
-        }        
+        }              
         if(this.records.length > 0)        
           this.selectedRecord = this.records[this.selectedIndex];        
         
+        console.log(this.selectedRecord);
         if(this.selectedRecord.issueDate == null)
           this.selectedRecord.issueDate = "2018-01-02";
         if(this.selectedRecord.expireDate == null)
           this.selectedRecord.expireDate = "2018-01-02";        
          
-        if(this.selectedIndex == 0) 
-          $(".btn-previous").attr("disabled", "");
-        else 
-          $(".btn-previous").removeAttr("disabled");
+        this.selectedIndex == 0 ? $(".btn-previous").attr("disabled", "") : $(".btn-previous").removeAttr("disabled");
+        this.selectedIndex == this.records.length - 1 ? $(".btn-next").attr("disabled", "") : $(".btn-next").removeAttr("disabled");    
 
-        if(this.selectedIndex == this.records.length - 1) 
-          $(".btn-next").attr("disabled", "");
-        else 
-          $(".btn-next").removeAttr("disabled");
+        let keys = Object.keys(this.selectedRecord);   
+        let self = this;   
+        keys.forEach(function(key){
+          if(self.selectedRecord[key] == null)
+            self.selectedRecord[key] = "";
+        });
+        console.log(this.selectedRecord);
       }
     }
   },
@@ -305,6 +315,17 @@ export default {
     },
     saveRecord() {
       this.setEditFields(false);
+      this.$store.dispatch('setLoadingFlag', 'flex');
+      this.$store.dispatch('setLoadingText', 'Updating...');
+      this.$store.dispatch('updateRecord', this.selectedRecord)
+        .then((response) => {          
+          this.$store.dispatch('setLoadingFlag', 'none');
+          console.log('Success');      
+        }).catch((error) => {    
+          this.$store.dispatch('setLoadingFlag', 'none');
+          console.log('Error');    
+        }
+      )     
     },
     setEditFields(flag) {
       if(flag) {
@@ -324,7 +345,10 @@ export default {
     gotoNext() {
       this.selectedIndex++;
       this.setEditFields(false);
-    },    
+    },  
+    customFormatter(date) {
+      return moment(date).format('MM-DD-YYYY');
+    }  
   }
 }
 </script>

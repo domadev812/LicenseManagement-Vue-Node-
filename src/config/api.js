@@ -22,7 +22,7 @@ let convertObjectToUrlData = (items) => {
 }
 
 let config = {
-  protocol: 'https',
+  protocol: 'http',
   // address: '192.168.0.100',
   address: 'localhost',
   port: '8080',
@@ -30,7 +30,7 @@ let config = {
   axiosConfig: {
     baseURL: baseUrl,
     headers: {},
-    withCredentials: true
+    //withCredentials: true
   },
   getEndpointUrl () {
     return this.protocol + '://' + this.address + (this.port ? (':' + this.port) : '') + (this.basePath ? this.basePath : '')
