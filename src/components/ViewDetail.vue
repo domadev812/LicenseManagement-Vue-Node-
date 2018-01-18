@@ -151,7 +151,8 @@
             <div class = "row detail-panel">
               <div class = "col-md-12">12/1/17: In-4087.pdf</div>
               <div class = "col-md-12">12/1/17: In-4087.pdf</div>
-              <button type="button" class="btn btn-success btn-small form-group editable">Add</button>
+              <button type="button" class="btn btn-success btn-small form-group editable" @click="uploadInvoices()">Add</button>
+              <b-form-file id="file_input1" v-model="file"></b-form-file>
             </div>
         </div>
       </div>    
@@ -274,8 +275,9 @@ export default {
         userCompany: '',
         userEMail: '',
         userFullName: '',
-        userRegisteredTo: '',
-      },      
+        userRegisteredTo: ''
+      },        
+      file: null,
       selectedIndex: -1,
       records: [],
       issueDate: '2017-12-12',
@@ -312,6 +314,26 @@ export default {
   methods: {
     backToHome() {
       this.$router.push({name: 'Content'});
+    },
+    uploadInvoices() {         
+      let self = this;
+      this.$store.dispatch('uploadFile', {"file": this.file})
+        .then((response) => {    
+          console.log(response);                
+          $.ajax({
+              url: response.url,
+              type: 'PUT',
+              contentType: 'image/png',
+              processData: false,
+              data: self.file
+            }).success(function(){
+              alert('success')
+            });     
+        }).catch((error) => {    
+          this.$store.dispatch('setLoadingFlag', 'none');
+          console.log('Error');    
+        }
+      )      
     },
     saveRecord() {
       this.setEditFields(false);

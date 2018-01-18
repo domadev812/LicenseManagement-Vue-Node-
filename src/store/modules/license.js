@@ -20,6 +20,28 @@ const actions = {
         })
     })
   },
+  uploadFile ({commit, dispatch, getters}, payload) {    
+    return new Promise((resolve, reject) => {
+      sendPut('/uploadFile', payload)
+        .then((response) => {          
+          resolve(response)
+        })
+        .catch((error) => {          
+          reject(error)
+        })
+    })
+  },
+  getUploadURL ({commit}, payload) {
+    return new Promise((resolve, reject) => {
+      sendGet('/getUploadURL/' + payload, null, null)
+        .then((response) => {
+          resolve(response)
+        })
+        .catch((error) => {
+          reject(error)
+        })
+    })
+  },
   fetchRecords ({commit}, payload) {    
     return new Promise((resolve, reject) => {      
       sendGet('/getRecords/' + JSON.stringify(payload.filterCondition) + "/" + JSON.stringify(payload.sortCondition), null)

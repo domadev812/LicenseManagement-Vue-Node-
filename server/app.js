@@ -1,18 +1,22 @@
-var express    = require('express'),
-    app        = express(),
-    http       = require('http').Server(app),
-    cors       = require('cors'),
-    bodyParser = require("body-parser"),
-    path = require('path'),
-    mysql      = require('mysql');
-
-var connectionRead, connectionWrite;
-var res;
+const express    = require('express'),
+     app        = express(),
+     http       = require('http').Server(app),
+     cors       = require('cors'),
+     bodyParser = require("body-parser"),
+     path = require('path'),
+     mysql      = require('mysql');
+const AWS = require('aws-sdk');
+AWS.config.update({accessKeyId: 'AKIAJIOEWEUWILDXYKPQ', secretAccessKey: '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'});
+AWS.config.update({region: 'us-west-2'});
+const s3 = new AWS.S3();
+let connectionRead, connectionWrite;
+let res;
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors())
 app.use(express.static(path.join(__dirname, '../dist')));
 app.use("/", express.static(__dirname + "/"));
+
 
 connectionRead = mysql.createConnection({
   host     : 'agiletestware.cni62heuz5ld.us-west-2.rds.amazonaws.com',
@@ -47,7 +51,24 @@ app.get('/importLicenseData', function(req, res) {
   this.res = res;
   getMaxID();      
 });
+app.options('/uploadFile', function(req, res) {        
+  res.header('Access-Control-Allow-Origin', 'http://localhost:8081');  
+  res.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, PUT, OPTIONS, HEAD');
+  res.send();  
+});
+app.put('/uploadFile', function(req, res) {
+  let fileName = "test.jpg";  
+  const myBucket = 'license-tool'  
+  const signedUrlExpireSeconds = 60 * 5
 
+  const url = s3.getSignedUrl('getObject', {
+      Bucket: myBucket,
+      Key: fileName,
+      Expires: signedUrlExpireSeconds
+  })
+  res.send({'url': url});
+  console.log(url);         
+});
 app.get('/getRecords/:filterCondition/:sortCondition', function(req, res) { 
   res.header('Access-Control-Allow-Origin', 'http://localhost:8081');  
   res.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, PUT, OPTIONS, HEAD');     
@@ -77,8 +98,7 @@ app.get('/getRecords/:filterCondition/:sortCondition', function(req, res) {
       item.dealNotes = item.dealNotes != null ? item.dealNotes.toString('binary') : "";
       item.importantNotes = item.importantNotes != null ? item.importantNotes.toString('binary') : "";
       item.expireState = index % 3;
-    });    
-    console.log("Result: " + result.length); 
+    });        
     res.send(result);
   });  
 });
@@ -140,7 +160,6 @@ app.delete('/deleteSQLData', function(req, res) {
     res.send({'error': false});
   });
 });
-
 function getMaxID() {
   connectionWrite.query("SELECT MAX(license_id) as licenseID from licenses", function(err, result) {
     if (err) throw err;      
