@@ -22,6 +22,19 @@ const actions = {
         })
     })
   },
+  fetchRecords ({commit}, payload) {    
+    return new Promise((resolve, reject) => {      
+      sendGet('/getRecords/' + JSON.stringify(payload), null)
+        .then((response) => {
+          commit('FETCH_NEW_RECORDS', response)
+          let items = clone(state.newRecords)
+          resolve(items)
+        })
+        .catch((error) => {
+          reject(error)
+        })
+    })
+  },
   updateRecord ({commit, dispatch, getters}, payload) {    
     return new Promise((resolve, reject) => {
       sendPutJSON('/updateRecord', payload)

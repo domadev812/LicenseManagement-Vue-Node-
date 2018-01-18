@@ -229,14 +229,14 @@ tr{
   color: #FFF;
 }
 .edit-column .edit{    
-  background: blue;  
+  background: lightblue;  
 }
 
 .edit-column .edit:hover{
   background: #9fb2d8;
 }
 .edit-column .active-state{  
-  background: #5d4c0a;  
+  background: lightpink;  
   color: #ffffff;
 }
 

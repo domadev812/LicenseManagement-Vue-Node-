@@ -24,6 +24,14 @@ app.get('/getNewRecords', function(req, res) {
   getMaxID();      
 });
 
+app.get('/getRecords/:filterCondition', function(req, res) { 
+  res.header('Access-Control-Allow-Origin', 'http://localhost:8081');  
+  res.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, PUT, OPTIONS, HEAD');     
+  let data = req.params.filterCondition;
+   
+  res.send({"error": false});  
+});
+
 app.options('/updateRecord', function(req, res) {        
   res.header('Access-Control-Allow-Origin', 'http://localhost:8081');
   //res.header('Access-Control-Allow-Credentials', true);

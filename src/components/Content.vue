@@ -104,10 +104,10 @@
                   <p style = "margin-top:30px;">Deal Value: </p>
                   <div class = "row">
                     <div class = "col-md-5 col-sm-5">
-                      <b-form-input id="minDealValue"  v-model = "minDeal"></b-form-input>
+                      <b-form-input id="minDealValue" type = "number"  v-model = "minDeal"></b-form-input>
                     </div>
                     <div class = "col-md-5 col-sm-5">
-                      <b-form-input id="maxDealValue"  v-model = "maxDeal"></b-form-input>
+                      <b-form-input id="maxDealValue" type = "number"  v-model = "maxDeal"></b-form-input>                      
                     </div>
                   </div>
                 </div>
@@ -144,7 +144,7 @@
               </div>
             </div>                      
           </div>
-          <div class="filter-footer"><button type="button" class="btn btn-success btn-filter">Filter</button></div>
+          <div class="filter-footer"><button type="button" class="btn btn-success btn-filter" @click="filterRecords()">Filter</button></div>
         </b-collapse>
       </div>      
     </div>
@@ -269,6 +269,55 @@ export default {
       if(licenseState == 'active') {
 
       }  
+    },
+    filterRecords: function() {
+      let products = new Array();
+      let licenseType = new Array();
+      let customerStatus = new Array();
+      let archive = true;
+      let filterJSON = {};
+
+      this.bumblebee == "accepted" ? products.push('bumblebee') : "";      
+      this.eggplant == "accepted" ? products.push('eggplant') : "";
+      this.dragonfly == "accepted" ? products.push('dragonfly') : "";
+      this.firefly == "accepted" ? products.push('firefly') : "";
+      this.pangolin == "accepted" ? products.push('pangolin') : "";
+
+      this.evaluation == "accepted" ? licenseType.push('evaluation') : "";      
+      this.basic == "accepted" ? licenseType.push('basic') : "";  
+      this.enterprise == "accepted" ? licenseType.push('enterprise') : "";  
+
+      this.new_customer == "accepted" ? customerStatus.push('new') : "";  
+      this.renewal_customer == "accepted" ? customerStatus.push('renewal') : "";  
+      this.lost_customer == "accepted" ? customerStatus.push('lost') : "";  
+
+      archive = this.showArchived == "accepted" ? true : false;
+      filterJSON.products = products;
+      filterJSON.licenseType = licenseType;
+      filterJSON.customerStatus = customerStatus;
+      filterJSON.archive = archive;
+      filterJSON.minDeal = this.minDeal;
+      filterJSON.maxDeal = this.maxDeal;
+
+      let self = this;
+      this.$store.dispatch('setLoadingFlag', 'flex');
+      this.$store.dispatch('setLoadingText', 'Loading...');
+      this.$store.dispatch('fetchRecords',  filterJSON)
+        .then((response) => {          
+          this.$store.dispatch('setLoadingFlag', false);  
+          this.records = response;         
+          this.totalRecords = this.records.length;
+          this.totalPages = Math.ceil(this.totalRecords / this.perPage);               
+          this.currentPage = 1;
+          if(this.totalRecords > this.perPage) this.endIndex = this.perPage - 1;                                  
+          this.$store.dispatch('setLoadingFlag', 'none');
+          self.$ls.set('records', this.records);
+          this.$store.dispatch('setRecords', this.records);          
+        }).catch((error) => {    
+          this.$store.dispatch('setLoadingFlag', 'none');
+          console.log('Error');    
+        }
+      )
     },
     fetchNewRecords: function () {   
       let self = this;
