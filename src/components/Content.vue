@@ -177,7 +177,7 @@
             <td>{{records[n + startIndex - 1].dealValue}}</td>
             <td>{{records[n + startIndex - 1].issueDate}}</td>            
             <td>{{records[n + startIndex - 1].expireDate}}</td>        
-            <td></td>            
+            <td>{{records[n + startIndex - 1].updateDate}}</td>        
             <td class = "edit-column">
               <i class = "fa fa-pencil edit" @click="vieweDetail(n + startIndex - 1)"></i>
               <i class = "fa" v-bind:class="[records[n + startIndex - 1].licenseState == 'active' ? 'fa-eye-slash active-state' : 'fa-eye archive']" @click="setArchive(n + startIndex - 1)"></i>

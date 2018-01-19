@@ -97,21 +97,22 @@ app.get('/getRecords/:filterCondition/:sortCondition', function(req, res) {
     }
     const today = moment(new Date());
     result.forEach(function(item, index){
-      const issueDate = moment(item.issueDate);
       const expireDate = moment(item.expireDate);
       item.accountsPayable = item.accountsPayable != null ? item.accountsPayable.toString('binary') : "";
       item.dealNotes = item.dealNotes != null ? item.dealNotes.toString('binary') : "";
       item.importantNotes = item.importantNotes != null ? item.importantNotes.toString('binary') : "";      
-      item.issueDate = issueDate.format("YYYY-MM-DD");
+      item.issueDate = moment(item.issueDate).format("YYYY-MM-DD");
       item.expireDate = expireDate.format("YYYY-MM-DD");
-
+      if(item.updateDate != null && item.updateDate != '')
+        item.updateDate = moment(item.updateDate).format("YYYY-MM-DD");
+      else 
+        item.updateDate = '';
       var duration = moment.duration(expireDate.diff(today)).asDays();
       if(duration < 0)
         item.expireState = 0;
       else if(duration <= 30)
         item.expireState = 1;
-      else item.expireState = 2;      
-      console.log(duration);
+      else item.expireState = 2;            
     });        
     res.send(result);
   });  
@@ -124,7 +125,8 @@ app.options('/updateRecord', function(req, res) {
   res.send();  
 });
 
-app.put('/updateRecord', function(req, res) {      
+app.put('/updateRecord', function(req, res) { 
+  let updateDate = moment(new Date()).format("YYYY-MM-DD");     
   let data = req.body;
   let sql = "update licenses set userCompany = '" + data.userCompany + "', ";
   sql += "licenseType = '" + data.licenseType + "', ";
@@ -137,7 +139,8 @@ app.put('/updateRecord', function(req, res) {
   sql += "licenseState = '" + data.licenseState + "', ";
   sql += "accountsPayable = '" + data.accountsPayable + "', ";
   sql += "dealNotes = '" + data.dealNotes + "', ";
-  sql += "importantNotes = '" + data.importantNotes + "' where license_id = " + data.license_id;
+  sql += "updateDate = '" + updateDate + "', ";
+  sql += "importantNotes = '" + data.importantNotes + "' where license_id = " + data.license_id;  
   connectionWrite.query(sql, function (err, result) {
     if (err) {
       res.send({'error': true});
