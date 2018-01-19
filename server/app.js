@@ -1,10 +1,11 @@
 const express    = require('express'),
-     app        = express(),
-     http       = require('http').Server(app),
-     cors       = require('cors'),
-     bodyParser = require("body-parser"),
-     path = require('path'),
-     mysql      = require('mysql');
+      app        = express(),
+      http       = require('http').Server(app),
+      cors       = require('cors'),
+      bodyParser = require("body-parser"),
+      path       = require('path'),
+      moment     = require('moment'); 
+      mysql      = require('mysql');
 const AWS = require('aws-sdk');
 AWS.config.update({accessKeyId: 'AKIAJIOEWEUWILDXYKPQ', secretAccessKey: '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'});
 AWS.config.update({region: 'us-west-2'});
@@ -69,6 +70,7 @@ app.put('/uploadFile', function(req, res) {
   res.send({'url': url});
   console.log(url);         
 });
+
 app.get('/getRecords/:filterCondition/:sortCondition', function(req, res) { 
   res.header('Access-Control-Allow-Origin', 'http://localhost:8081');  
   res.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, PUT, OPTIONS, HEAD');     
@@ -89,15 +91,27 @@ app.get('/getRecords/:filterCondition/:sortCondition', function(req, res) {
   }  
   sql += " ORDER BY " + sort.field + " " + sort.order;  
   connectionWrite.query(sql, function(err, result) {
-    if(err) {
+    if(err) {      
       console.log("Error");
       return;
     }
+    const today = moment(new Date());
     result.forEach(function(item, index){
+      const issueDate = moment(item.issueDate);
+      const expireDate = moment(item.expireDate);
       item.accountsPayable = item.accountsPayable != null ? item.accountsPayable.toString('binary') : "";
       item.dealNotes = item.dealNotes != null ? item.dealNotes.toString('binary') : "";
-      item.importantNotes = item.importantNotes != null ? item.importantNotes.toString('binary') : "";
-      item.expireState = index % 3;
+      item.importantNotes = item.importantNotes != null ? item.importantNotes.toString('binary') : "";      
+      item.issueDate = issueDate.format("YYYY-MM-DD");
+      item.expireDate = expireDate.format("YYYY-MM-DD");
+
+      var duration = moment.duration(expireDate.diff(today)).asDays();
+      if(duration < 0)
+        item.expireState = 0;
+      else if(duration <= 30)
+        item.expireState = 1;
+      else item.expireState = 2;      
+      console.log(duration);
     });        
     res.send(result);
   });  
@@ -172,7 +186,7 @@ function getMaxID() {
 
 function getNewRecords(maxID) {
   var self = this;  
-  connectionRead.query("SELECT L.licenseID as license_id, L.userFullName, L.userEMail, L.userCompany, L.userRegisteredTo, P.productName FROM licenses as L JOIN products as P on P.productid = L.productid where L.licenseID > " + maxID + " order by L.licenseID", function(err, result) {
+  connectionRead.query("SELECT L.licenseID as license_id, L.userFullName, L.userEMail, L.userCompany, L.userRegisteredTo, L.validityPeriod, P.productName FROM licenses as L JOIN products as P on P.productid = L.productid where L.licenseID > " + maxID + " order by L.licenseID", function(err, result) {
     if (err) throw err; 
     var newRecords = [];
     result.forEach(function(item){
@@ -193,17 +207,26 @@ function getNewRecords(maxID) {
       else if(item.userRegisteredTo == "enterprise" || item.userRegisteredTo == "Enterprise")
         item.licenseType = "enterprise";
       else item.licenseType = "";
+      let issueDate = new Date(item.license_id);            
+      issueDate = moment(issueDate).format("YYYY-MM-DD");
+      
+      let expireDate = new Date(issueDate);
+      expireDate.setDate(expireDate.getDate() + item.validityPeriod);
+      expireDate = moment(expireDate).format("YYYY-MM-DD");
+      item.issueDate = issueDate;
+      item.expireDate = expireDate;
+
       var keys = Object.keys(item);      
       keys.forEach(function(key){
         record.push(item[key]);
-      });            
+      });                  
       newRecords.push(record);
     })
     if(newRecords.length == 0) {
       self.res.send({'error': false, 'numbers': 0});
       return;
     }
-    var sql = "INSERT INTO licenses (license_id, userFullName, userEMail, userCompany, userRegisteredTo, productName, licenseType) VALUES ?";
+    var sql = "INSERT INTO licenses (license_id, userFullName, userEMail, userCompany, userRegisteredTo, validityPeriod, productName, licenseType, issueDate, expireDate) VALUES ?";
     connectionWrite.query(sql, [newRecords], function (err, result) {      
       if (err) {
         self.res.send({'error': true});

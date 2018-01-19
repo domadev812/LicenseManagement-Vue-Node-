@@ -113,6 +113,11 @@ tr{
   padding: 0.6rem 1.2rem !important;
 }
 
+.filter-result-comment{
+  text-align: center;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
 .mt-2 {
   padding-top: 0px !important;
 }
@@ -242,19 +247,19 @@ tr{
   color: #FFF;
 }
 .edit-column .edit{    
-  background: lightblue;  
+  background: #39f;  
 }
 
 .edit-column .edit:hover{
   background: #9fb2d8;
 }
 .edit-column .active-state{  
-  background: lightpink;  
+  background: #72ca5e;  
   color: #ffffff;
 }
 
 .edit-column .archive{
-  background: #72ca5e;
+  background: #f99;  
   color: #ffffff;
 }
 
@@ -269,11 +274,11 @@ tr{
 }
 
 .expire-state .expire-soon{
-  color: #9d08ca;
+  color: #f93;
 }
 
 .expire-state .expired{
-  color: #e65b5b;
+  color: #f30;
 }
 
 .expire-state .expire-after{

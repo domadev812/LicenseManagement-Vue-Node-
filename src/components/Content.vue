@@ -149,6 +149,7 @@
       </div>      
     </div>
     <div class = "database-table">
+      <div class = "filter-result-comment">Showing <span style = "color:blue;">{{(startIndex + 1)}} - {{(endIndex + 1)}}</span> of <span style = "color:red;font-weight:bold;">{{totalRecords}}</span> records</div>
       <table class="table table-striped table-hover">
         <thead>
           <tr style = "background: rgb(114, 202, 95);color: white;font-size: 16px;">
@@ -222,7 +223,7 @@ export default {
       perPage: 50,
       totalPages: 1,
       currentPage: 1,
-      startIndex: 0,
+      startIndex: 0,      
       endIndex: 0,
       startExpireDate: '2018-01-01',
       endExpireDate: '2018-01-01',
@@ -338,8 +339,16 @@ export default {
       filterJSON.licenseType = licenseType;
       filterJSON.customerStatus = customerStatus;
       filterJSON.archive = archive;
-      filterJSON.minDeal = this.minDeal;
-      filterJSON.maxDeal = this.maxDeal;
+      if(this.minDeal != '')
+        filterJSON.minDeal = this.minDeal;
+      else
+        filterJSON.minDeal = 0;
+      
+      if(this.maxDeal != '')
+        filterJSON.maxDeal = this.maxDeal;
+      else
+        filterJSON.maxDeal = 0;
+      
       this.$store.dispatch('setFilterCondition', filterJSON)
       this.fetchRecords(filterJSON, this.sortCondition);
     },

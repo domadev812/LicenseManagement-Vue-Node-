@@ -199,10 +199,8 @@ export default {
     this.records = this.$ls.get('records');        
     let self = this;
     $(document).ready(function(){      
-      self.selectedIndex = self.$route.params.id - 1;    
-      // $(".detail-date").attr("disabled", "");    
+      self.selectedIndex = self.$route.params.id - 1;
       $(".detail-date input").attr("disabled", "");  
-      // $(".detail-date:even input").attr("disabled", "");
       self.setEditFields(false);      
     });    
   },
@@ -284,6 +282,7 @@ export default {
       expireDate: '2017-12-12',
       selectedCustomStatus: 'new',
       customStatus: [
+        { value: '', text: 'N/A' },
         { value: 'new', text: 'New' },
         { value: 'renewal', text: 'Renewal' },
         { value: 'lost', text: 'Lost' }
