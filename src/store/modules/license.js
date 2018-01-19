@@ -13,6 +13,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       sendGet('/importLicenseData', null, null)
         .then((response) => {
+          dispatch('setAlertData', {showAlert: true, content: 'Import New License from License4J', alertClass: 'success'})       
           resolve(response)
         })
         .catch((error) => {
@@ -58,7 +59,8 @@ const actions = {
   updateRecord ({commit, dispatch, getters}, payload) {    
     return new Promise((resolve, reject) => {
       sendPutJSON('/updateRecord', payload)
-        .then((response) => {          
+        .then((response) => {   
+          dispatch('setAlertData', {showAlert: true, content: 'Update Record', alertClass: 'success'})       
           resolve(response)
         })
         .catch((error) => {          

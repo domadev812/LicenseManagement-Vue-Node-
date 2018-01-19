@@ -1,3 +1,9 @@
+let setAlertData = ({commit}, payload) => {
+  commit('ALERT_CHANGE', payload)
+  setTimeout(() => {
+    commit('ALERT_HIDE')
+  }, 2000)
+}
 let setRecords = ({commit}, payload) => {
   commit('SET_RECORDS', payload)
 }
@@ -16,6 +22,7 @@ let setFilterCondition = ({commit}, payload) => {
 let setSortCondition = ({commit}, payload) => {
   commit('SET_SORT_CONDITION', payload)
 }
+export { setAlertData }
 export { setRecords }
 export { setLoadingFlag }
 export { setLoadingText }
