@@ -236,7 +236,6 @@ export default {
         if(this.records.length > 0)        
           this.selectedRecord = this.records[this.selectedIndex];        
         
-        console.log(this.selectedRecord);
         if(this.selectedRecord.issueDate == null)
           this.selectedRecord.issueDate = "2018-01-02";
         if(this.selectedRecord.expireDate == null)
@@ -251,7 +250,6 @@ export default {
           if(self.selectedRecord[key] == null)
             self.selectedRecord[key] = "";
         });
-        console.log(this.selectedRecord);
       }
     }
   },
@@ -317,8 +315,7 @@ export default {
     uploadInvoices() {         
       let self = this;
       this.$store.dispatch('uploadFile', {"file": this.file})
-        .then((response) => {    
-          console.log(response);                
+        .then((response) => {                 
           $.ajax({
               url: response.url,
               type: 'PUT',

@@ -60,7 +60,6 @@ const actions = {
       sendPutJSON('/updateRecord', payload)
         .then((response) => {          
           resolve(response)
-          console.log(response);
         })
         .catch((error) => {          
           reject(error)
@@ -72,7 +71,6 @@ const actions = {
       sendPutJSON('/updateLicenseState', payload)
         .then((response) => {          
           resolve(response)
-          console.log(response);
         })
         .catch((error) => {          
           reject(error)

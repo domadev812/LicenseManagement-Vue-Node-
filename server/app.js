@@ -67,8 +67,7 @@ app.put('/uploadFile', function(req, res) {
       Key: fileName,
       Expires: signedUrlExpireSeconds
   })
-  res.send({'url': url});
-  console.log(url);         
+  res.send({'url': url});       
 });
 
 app.get('/getRecords/:filterCondition/:sortCondition', function(req, res) { 
@@ -87,12 +86,13 @@ app.get('/getRecords/:filterCondition/:sortCondition', function(req, res) {
       sql += "customerStatus in ('" + filter.customerStatus.join("','") + "') and ";
     if(!filter.archive)
       sql += "licenseState = 'active' and ";
+    sql += "expireDate >= '" + filter.startExpireDate + "' and expireDate <= '" + filter.endExpireDate + "' and ";
     sql += "dealValue >= " + filter.minDeal + " and dealValue <= " + filter.maxDeal;
   }  
   sql += " ORDER BY " + sort.field + " " + sort.order;  
   connectionWrite.query(sql, function(err, result) {
     if(err) {      
-      console.log("Error");
+      console.log("Error: " + this.sql);
       return;
     }
     const today = moment(new Date());
@@ -157,10 +157,12 @@ app.options('/updateLicenseState', function(req, res) {
 });
 
 app.put('/updateLicenseState', function(req, res) {  
+  let updateDate = moment(new Date()).format("YYYY-MM-DD");
   let data = req.body;
-  let sql = "update licenses set licenseState = '" + data.licenseState + "' where license_id = " + data.license_id;
+  let sql = "update licenses set licenseState = '" + data.licenseState + "', updateDate = '" + updateDate + "' where license_id = " + data.license_id;
   connectionWrite.query(sql, function (err, result) {
     if (err) {
+      console.log("Error: " + this.sql);
       res.send({'error': true});
       return;
     }
@@ -245,7 +247,7 @@ function fetchRecords() {
   var self = this; 
   connectionWrite.query("SELECT * FROM licenses", function(err, result) {
     if (err) {
-      console.log(this.sql);
+      console.log("Error: " + this.sql);
       return;
     }  
     

@@ -194,6 +194,9 @@
       </table>
       <b-pagination size="md" :total-rows="totalRecords" v-model="currentPage" :per-page="perPage">
       </b-pagination>
+      <b-form-select v-model = "perPage" :options="perPages">
+      </b-form-select>
+      
     </div>
     <LoadingModal></LoadingModal>
   </div>  
@@ -242,7 +245,13 @@ export default {
       lost_customer: 'not_accepted',
       minDeal:0,
       maxDeal:20000,               
-      records: []
+      records: [],
+      perPages: [
+        { value: 10, text: '10' },
+        { value: 20, text: '20' },
+        { value: 30, text: '30' },
+        { value: 50, text: '50' },
+      ]
     }
   },
   created() {       
@@ -257,12 +266,15 @@ export default {
   watch: {
     currentPage: {
       handler () {
-        this.startIndex = (this.currentPage - 1) * this.perPage;
-        if(this.currentPage == this.totalPages) {
-          this.endIndex = this.totalRecords - 1;
-        } else {
-          this.endIndex = this.currentPage * this.perPage - 1;
-        }
+        this.intiShowRecords();
+      }
+    },
+    perPage: {
+      handler () {        
+        if(this.currentPage > 1)
+          this.currentPage = 1;
+        else 
+          this.intiShowRecords();
       }
     }
   },
@@ -293,6 +305,15 @@ export default {
         }
       )      
     },
+    intiShowRecords() {
+      this.totalPages = Math.ceil(this.totalRecords / this.perPage); 
+      this.startIndex = (this.currentPage - 1) * this.perPage;
+      if(this.currentPage == this.totalPages) {
+        this.endIndex = this.totalRecords - 1;
+      } else {
+        this.endIndex = this.currentPage * this.perPage - 1;
+      }
+    },
     initFilterComponents() {
       if(this.filterCondition == null) return;
        this.bumblebee = this.filterCondition.products.indexOf("bumblebee") > -1 ? "accepted" : "not_accepted";
@@ -312,6 +333,8 @@ export default {
        this.showArchived = this.filterCondition.archive ? "accepted" : "not_accepted";
        this.minDeal = this.filterCondition.minDeal;
        this.maxDeal = this.filterCondition.maxDeal;
+       this.startExpireDate = this.filterCondition.startExpireDate;
+       this.endExpireDate = this.filterCondition.endExpireDate;
     },
     filterRecords: function() {
       let products = new Array();
@@ -349,6 +372,9 @@ export default {
       else
         filterJSON.maxDeal = 0;
       
+      filterJSON.startExpireDate = this.startExpireDate;
+      filterJSON.endExpireDate = this.endExpireDate;
+
       this.$store.dispatch('setFilterCondition', filterJSON)
       this.fetchRecords(filterJSON, this.sortCondition);
     },
@@ -406,7 +432,7 @@ export default {
         return "";
     },
     customFormatter(date) {
-      return moment(date).format('MM-DD-YYYY');
+      return moment(date).format('YYYY-MM-DD');
     }
   }
 }

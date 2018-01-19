@@ -72,8 +72,7 @@
         this.$store.dispatch('setLoadingFlag', 'flex');
         this.$store.dispatch('setLoadingText', 'Importing...');
         this.$store.dispatch('importLicenseData')
-          .then((response) => {          
-            console.log(response);
+          .then((response) => {   
             self.$store.dispatch('setLoadingFlag', 'none');
             this.$swal(
                 'Completed!',                
