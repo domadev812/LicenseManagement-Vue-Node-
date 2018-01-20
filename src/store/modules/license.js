@@ -9,11 +9,11 @@ const state = {
 }
 
 const actions = {
-  importLicenseData ({commit}) {
+  importLicenseData ({commit, dispatch}) {
     return new Promise((resolve, reject) => {
       sendGet('/importLicenseData', null, null)
         .then((response) => {
-          dispatch('setAlertData', {showAlert: true, content: 'Import New License from License4J', alertClass: 'success'})       
+          // dispatch('setAlertData', {showAlert: true, content: 'Import New License from License4J', alertClass: 'success'})       
           resolve(response)
         })
         .catch((error) => {
@@ -21,9 +21,9 @@ const actions = {
         })
     })
   },
-  uploadFile ({commit, dispatch, getters}, payload) {    
-    return new Promise((resolve, reject) => {
-      sendPut('/uploadFile', payload)
+  uploadFile ({commit, dispatch, getters}, payload) {        
+    return new Promise((resolve, reject) => {      
+      sendPost('/uploadFile', payload, {'Content-Type':'multipart/form-data'})
         .then((response) => {          
           resolve(response)
         })
@@ -43,15 +43,16 @@ const actions = {
         })
     })
   },
-  fetchRecords ({commit}, payload) {    
+  fetchRecords ({commit, dispatch}, payload) {    
     return new Promise((resolve, reject) => {      
       sendGet('/getRecords/' + JSON.stringify(payload.filterCondition) + "/" + JSON.stringify(payload.sortCondition), null)
-        .then((response) => {
+        .then((response) => {          
           commit('FETCH_NEW_RECORDS', response)
           let items = clone(state.newRecords)
           resolve(items)
         })
         .catch((error) => {
+          dispatch('setAlertData', {showAlert: true, content: 'Connection Error!', alertClass: 'danger'})
           reject(error)
         })
     })
@@ -63,7 +64,8 @@ const actions = {
           dispatch('setAlertData', {showAlert: true, content: 'Update Record', alertClass: 'success'})       
           resolve(response)
         })
-        .catch((error) => {          
+        .catch((error) => {    
+          dispatch('setAlertData', {showAlert: true, content: 'Connection Error!', alertClass: 'danger'})      
           reject(error)
         })
     })
@@ -71,6 +73,19 @@ const actions = {
   updateLicenseState ({commit, dispatch, getters}, payload) {    
     return new Promise((resolve, reject) => {
       sendPutJSON('/updateLicenseState', payload)
+        .then((response) => {  
+          dispatch('setAlertData', {showAlert: true, content: 'Update License State', alertClass: 'success'})               
+          resolve(response)
+        })
+        .catch((error) => {    
+          dispatch('setAlertData', {showAlert: true, content: 'Connection Error!', alertClass: 'danger'})      
+          reject(error)
+        })
+    })
+  },
+  deleteSQLData ({commit, dispatch, getters}, payload) {
+    return new Promise((resolve, reject) => {
+      sendDelete('/deleteSQLData', null)
         .then((response) => {          
           resolve(response)
         })
@@ -79,13 +94,13 @@ const actions = {
         })
     })
   },
-  deleteSQLData ({commit, dispatch, getters}, payload) {
+  deleteS3Data ({commit, dispatch, getters}, payload) {
     return new Promise((resolve, reject) => {
-      sendDelete('/deleteSQLData', null)
-        .then((response) => {
+      sendDelete('/deleteS3Data', null)
+        .then((response) => {          
           resolve(response)
         })
-        .catch((error) => {
+        .catch((error) => {          
           reject(error)
         })
     })

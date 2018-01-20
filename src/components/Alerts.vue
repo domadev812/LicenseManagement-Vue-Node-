@@ -52,10 +52,10 @@
   }
 
   .alert {
-    position: absolute;
+    position: fixed;
     z-index: 999999;
     width: 20%;
-    top: 7%;
+    top: 100px;
     right: 0;
     background: #fde073;
     overflow: hidden;

@@ -138,9 +138,9 @@
             <b-form-textarea id="textarea1" class="editable"
                       v-model = "selectedRecord.accountsPayable"
                       placeholder="Enter something"
-                      :rows="3"
+                      :rows="5"
                       :no-resize="true"
-                      :max-rows="3">
+                      :max-rows="5">
             </b-form-textarea>          
           </div>
         </div>
@@ -149,10 +149,11 @@
         <div class = "content-panel">
           <div class = "row sub-title">Invoices</div>
             <div class = "row detail-panel">
-              <div class = "col-md-12">12/1/17: In-4087.pdf</div>
-              <div class = "col-md-12">12/1/17: In-4087.pdf</div>
-              <button type="button" class="btn btn-success btn-small form-group editable" @click="uploadInvoices()">Add</button>
-              <b-form-file id="file_input1" v-model="file"></b-form-file>
+              <div class = "col-md-12 invoice-detail" v-for="(item, index) in this.invoiceList">{{item.date}}: {{item.file_name}}<i class = "fa fa-remove remove-invoice" @click="deleteInvoice(index)" v-if = "invoiceDeleteFlag"></i></div>              
+              <div class = "col-md-12" style = "bottom: 0px;position: absolute;">
+                <b-form-file id="upload_file" v-model="file" class = "file-chooser editable" style = "width: 60% !important; float:left;"></b-form-file>
+                <button type="button" class="btn btn-success btn-small form-group editable invoice-add-button" @click="uploadInvoices()">Add</button>              
+              </div>
             </div>
         </div>
       </div>    
@@ -185,13 +186,14 @@
         <button type="button" id="btnSave" class="btn btn-success btn-small form-group editable" @click="saveRecord()">Save</button>
       </div>
     </div>
+    <LoadingModal></LoadingModal>
   </div>  
 </template>
 <script>
 import { mapGetters } from 'vuex'
 import Datepicker from 'vuejs-datepicker'
 import moment from 'moment'
-
+const LoadingModal = () => import(/* webpackChunkName: "Content" */ './Loading.vue')
 export default {
   name: 'ViewDetail',
   created() {
@@ -207,6 +209,7 @@ export default {
   computed: {
   },
   components: {
+    LoadingModal,
     Datepicker
   },
   watch: {
@@ -228,7 +231,9 @@ export default {
             userEMail: '',
             userFullName: '',
             userRegisteredTo: '',
-          }          
+            invoices: '[]'
+          } 
+          this.invoiceList = [];         
           this.setEditFields(false);
           $("#btnEdit").attr("disabled", "");          
           return;
@@ -243,7 +248,11 @@ export default {
          
         this.selectedIndex == 0 ? $(".btn-previous").attr("disabled", "") : $(".btn-previous").removeAttr("disabled");
         this.selectedIndex == this.records.length - 1 ? $(".btn-next").attr("disabled", "") : $(".btn-next").removeAttr("disabled");    
+        console.log(this.selectedRecord);
+        if(this.selectedRecord.invoices == null || this.selectedRecord.invoices == "") this.invoiceList = [];        
+        else this.invoiceList = JSON.parse(this.selectedRecord.invoices);
 
+        this.selectedRecord.in
         let keys = Object.keys(this.selectedRecord);   
         let self = this;   
         keys.forEach(function(key){
@@ -271,9 +280,12 @@ export default {
         userCompany: '',
         userEMail: '',
         userFullName: '',
-        userRegisteredTo: ''
+        userRegisteredTo: '',
+        invoices: '[]'
       },        
       file: null,
+      invoiceList: {},
+      invoiceDeleteFlag: false,
       selectedIndex: -1,
       records: [],
       issueDate: '2017-12-12',
@@ -312,29 +324,33 @@ export default {
     backToHome() {
       this.$router.push({name: 'Content'});
     },
-    uploadInvoices() {         
-      let self = this;
-      this.$store.dispatch('uploadFile', {"file": this.file})
-        .then((response) => {                 
-          $.ajax({
-              url: response.url,
-              type: 'PUT',
-              contentType: 'image/png',
-              processData: false,
-              data: self.file
-            }).success(function(){
-              alert('success')
-            });     
+    uploadInvoices() {     
+      // $('#upload_file').click(); 
+      if(this.file == null) return;
+      this.$store.dispatch('setLoadingFlag', 'flex');
+      this.$store.dispatch('setLoadingText', 'Updating...');                              
+      this.$store.dispatch('uploadFile', {"file": this.file, "license_id": this.selectedRecord.license_id})
+        .then((response) => {          
+          this.$store.dispatch('setLoadingFlag', 'none');
+          let invoice = {"date": response.date, "file_name": response.file_name};         
+          this.invoiceList.push(invoice);  
+          console.log(this.invoiceList);        
         }).catch((error) => {    
           this.$store.dispatch('setLoadingFlag', 'none');
-          console.log('Error');    
+          console.log('Error'); 
+          console.log(error);   
         }
-      )      
+      ) 
+    },
+    deleteInvoice(index) {
+      this.invoiceList.splice(index, 1);
     },
     saveRecord() {
       this.setEditFields(false);
+      this.selectedRecord.invoices = JSON.stringify(this.invoiceList);
       this.$store.dispatch('setLoadingFlag', 'flex');
       this.$store.dispatch('setLoadingText', 'Updating...');
+      console.log(this.selectedRecord);
       this.$store.dispatch('updateRecord', this.selectedRecord)
         .then((response) => {          
           this.$store.dispatch('setLoadingFlag', 'none');
@@ -346,21 +362,28 @@ export default {
       )     
     },
     setEditFields(flag) {
+      this.invoiceDeleteFlag = flag;
       if(flag) {
         $(".editable").removeAttr("disabled");        
+        $(".file-chooser input").removeAttr("disabled");        
+        $(".file-chooser span").removeAttr("disabled");        
         $("#btnSave").removeAttr("disabled");
         $("#btnEdit").attr("disabled", "");
       } else {
-        $(".editable").attr("disabled", "");
-        $("#btnEdit").removeAttr("disabled");
+        $(".editable").attr("disabled", "");                
+        $(".file-chooser input").attr("disabled", "");        
+        $(".file-chooser span").attr("disabled", "");         
         $("#btnSave").attr("disabled", "");
+        $("#btnEdit").removeAttr("disabled");
       }      
     },
     gotoPrevious() {
+      this.file = null;
       this.selectedIndex--;
       this.setEditFields(false);
     },
     gotoNext() {
+      this.file = null;
       this.selectedIndex++;
       this.setEditFields(false);
     },  

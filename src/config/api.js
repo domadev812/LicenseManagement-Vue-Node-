@@ -5,9 +5,10 @@ let baseUrl = 'http://localhost:8080/'
 // let baseUrl = 'http://192.168.0.100:8080/'
 let convertObjectToFormData = (items) => {
   const formData = new FormData()
-  for (let key in items) {
+  for (let key in items) {    
+    console.log(items[key]);
     formData.append(key, items[key])
-  }
+  }  
   return formData
 }
 
@@ -41,7 +42,7 @@ let $http = axios.create(config.axiosConfig)
 
 let sendPost = (url, payload, headers = null) => {
   return new Promise((resolve, reject) => {
-    $http.post(url, convertObjectToFormData(payload))
+    $http.post(url, convertObjectToFormData(payload), headers)
       .then((handleSuccess) => {
         if (handleSuccess.data.code === 200 || handleSuccess.data.hasOwnProperty('code')) {
           reject({message: handleSuccess.data.message, code: handleSuccess.data.code})

@@ -65,7 +65,44 @@
         }.bind(this))      
       },
       deleteS3Data() {
-        
+        let self = this
+        this.$swal({
+          title: 'Are you sure?',
+          text: 'You want to do delete all files from S3?',
+          type: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Yes, delete it!',
+          cancelButtonText: 'No, keep it!'
+        }).then(function () {
+          this.$store.dispatch('setLoadingFlag', 'flex');
+          this.$store.dispatch('setLoadingText', 'Updating...');
+          this.$store.dispatch('deleteS3Data')
+            .then((response) => {
+              this.$store.dispatch('setLoadingFlag', 'none');
+              this.$swal(
+                'Deleted!',
+                response.message,
+                'success'
+              ).then(function () {                
+              })
+            })
+            .catch((error) => {
+              this.$store.dispatch('setLoadingFlag', 'none');
+              this.$swal(
+                'Error!',
+                error.message,
+                'error'
+              )
+            })
+        }.bind(this), function (dismiss) {
+          if (dismiss === 'cancel') {
+            this.$swal(
+              'Cancelled',
+              'Cancelled',
+              'error'
+            )
+          }
+        }.bind(this))  
       },
       importNewData() {
         let self = this        ;

@@ -90,6 +90,15 @@
                         Enterprise
                     </b-form-checkbox>
                   </div>
+                  <div>                  
+                    <b-form-checkbox
+                        v-model="eggplant_type"
+                        class = "license-type"
+                        value="accepted"
+                        unchecked-value="not_accepted">
+                        Eggplant
+                    </b-form-checkbox>
+                  </div>
                 </div>
                 <div class = "col-md-3 col-sm-6">
                   <p>LICENSE STATE: </p>
@@ -239,6 +248,7 @@ export default {
       evaluation: 'not_accepted',  
       basic: 'not_accepted',
       enterprise: 'not_accepted',
+      eggplant_type: 'not_accepted',
       showArchived: 'accepted',      
       new_customer: 'not_accepted',
       renewal_customer: 'not_accepted',
@@ -325,6 +335,7 @@ export default {
        this.evaluation = this.filterCondition.licenseType.indexOf("evaluation") > -1 ? "accepted" : "not_accepted";
        this.basic = this.filterCondition.licenseType.indexOf("basic") > -1 ? "accepted" : "not_accepted";
        this.enterprise = this.filterCondition.licenseType.indexOf("enterprise") > -1 ? "accepted" : "not_accepted";
+       this.eggplant_type = this.filterCondition.licenseType.indexOf("eggplant") > -1 ? "accepted" : "not_accepted";
 
        this.new_customer = this.filterCondition.customerStatus.indexOf("new") > -1 ? "accepted" : "not_accepted";
        this.renewal_customer = this.filterCondition.customerStatus.indexOf("renewal") > -1 ? "accepted" : "not_accepted";
@@ -352,6 +363,7 @@ export default {
       this.evaluation == "accepted" ? licenseType.push('evaluation') : "";      
       this.basic == "accepted" ? licenseType.push('basic') : "";  
       this.enterprise == "accepted" ? licenseType.push('enterprise') : "";  
+      this.eggplant_type == "accepted" ? licenseType.push('eggplant') : "";
 
       this.new_customer == "accepted" ? customerStatus.push('new') : "";  
       this.renewal_customer == "accepted" ? customerStatus.push('renewal') : "";  
@@ -397,20 +409,19 @@ export default {
       this.$store.dispatch('fetchRecords', payload)
         .then((response) => {          
           this.$store.dispatch('setLoadingFlag', false);  
+          this.$store.dispatch('setLoadingFlag', 'none');
           this.records = response;         
           this.totalRecords = this.records.length;
           this.totalPages = Math.ceil(this.totalRecords / this.perPage);               
           this.currentPage = 1;
-          if(this.totalRecords > this.perPage) this.endIndex = this.perPage - 1;                                  
-          this.$store.dispatch('setLoadingFlag', 'none');
+          if(this.totalRecords > this.perPage) this.endIndex = this.perPage - 1;                                            
           self.$ls.set('records', this.records);
           this.startIndex = (this.currentPage - 1) * this.perPage;
           if(this.currentPage == this.totalPages) {
             this.endIndex = this.totalRecords - 1;
           } else {
             this.endIndex = this.currentPage * this.perPage - 1;
-          }
-          this.$store.dispatch('setRecords', this.records);          
+          }                  
         }).catch((error) => {    
           this.$store.dispatch('setLoadingFlag', 'none');
           console.log('Error');    

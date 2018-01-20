@@ -4,21 +4,23 @@ const express    = require('express'),
       cors       = require('cors'),
       bodyParser = require("body-parser"),
       path       = require('path'),
-      moment     = require('moment'); 
-      mysql      = require('mysql');
+      mime       = require('mime-types'),
+      moment     = require('moment'), 
+      mysql      = require('mysql'),
+      formidable = require('formidable'),
+      fs         = require('fs');
 const AWS = require('aws-sdk');
-AWS.config.update({accessKeyId: 'AKIAJIOEWEUWILDXYKPQ', secretAccessKey: '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'});
-AWS.config.update({region: 'us-west-2'});
-const s3 = new AWS.S3();
 let connectionRead, connectionWrite;
 let res;
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
 app.use(cors())
 app.use(express.static(path.join(__dirname, '../dist')));
 app.use("/", express.static(__dirname + "/"));
 
-
+AWS.config.update({accessKeyId: 'AKIAJIOEWEUWILDXYKPQ', secretAccessKey: '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'});
+AWS.config.update({region: 'us-west-2'});
+const s3 = new AWS.S3();
 connectionRead = mysql.createConnection({
   host     : 'agiletestware.cni62heuz5ld.us-west-2.rds.amazonaws.com',
   user     : 'readonly',
@@ -34,12 +36,18 @@ connectionWrite = mysql.createConnection({
 });
 
 connectionRead.connect(function(err) {
-  if (err) throw err;
+  if (err) {
+    console.log("Connection Readable Database Error");
+    return;
+  }
   console.log("Connected Readonly Database!");  
 });
 
 connectionWrite.connect(function(err) {
-  if (err) throw err;
+  if (err) {
+    console.log("Connection Writeable Database Error");
+    return;
+  }
   console.log("Connected Writeable Database!");  
 });
 
@@ -57,17 +65,33 @@ app.options('/uploadFile', function(req, res) {
   res.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, PUT, OPTIONS, HEAD');
   res.send();  
 });
-app.put('/uploadFile', function(req, res) {
-  let fileName = "test.jpg";  
-  const myBucket = 'license-tool'  
-  const signedUrlExpireSeconds = 60 * 5
-
-  const url = s3.getSignedUrl('getObject', {
-      Bucket: myBucket,
-      Key: fileName,
-      Expires: signedUrlExpireSeconds
-  })
-  res.send({'url': url});       
+app.post('/uploadFile', function(req, res) {    
+  this.res = res;
+  let fileName = '', contentType = ''; 
+  let licenseID = 0;
+  let data = req.body;  
+  var form = new formidable.IncomingForm();
+  form.uploadDir = path.join(__dirname, '/uploads');    
+  form.on('file', function(field, file) {
+    fs.rename(file.path, path.join(form.uploadDir, file.name));    
+    fileName = file.name;        
+  });
+  
+  form.on('error', function(err) {   
+    console.log(err); 
+  });  
+  form.on('end', function() { 
+    console.log('End');
+    contentType = mime.lookup(path.join(__dirname, '/uploads/' + fileName));
+    console.log(contentType);
+    uploadS3(fileName, licenseID, contentType);
+  });   
+  form.parse(req, function(err, fields, files) {
+    if(fields.hasOwnProperty('license_id')) {
+      licenseID = fields.license_id; 
+      uploadS3(fileName, licenseID, contentType);         
+    }
+  });
 });
 
 app.get('/getRecords/:filterCondition/:sortCondition', function(req, res) { 
@@ -128,6 +152,7 @@ app.options('/updateRecord', function(req, res) {
 app.put('/updateRecord', function(req, res) { 
   let updateDate = moment(new Date()).format("YYYY-MM-DD");     
   let data = req.body;
+  console.log(data);
   let sql = "update licenses set userCompany = '" + data.userCompany + "', ";
   sql += "licenseType = '" + data.licenseType + "', ";
   sql += "dealValue = '" + data.dealValue + "', ";
@@ -140,6 +165,7 @@ app.put('/updateRecord', function(req, res) {
   sql += "accountsPayable = '" + data.accountsPayable + "', ";
   sql += "dealNotes = '" + data.dealNotes + "', ";
   sql += "updateDate = '" + updateDate + "', ";
+  sql += "invoices = '" + data.invoices + "', ";
   sql += "importantNotes = '" + data.importantNotes + "' where license_id = " + data.license_id;  
   connectionWrite.query(sql, function (err, result) {
     if (err) {
@@ -169,6 +195,7 @@ app.put('/updateLicenseState', function(req, res) {
     res.send({'error': false});
   });
 });
+
 app.delete('/deleteSQLData', function(req, res) {    
   let sql = "TRUNCATE licenses";
   connectionWrite.query(sql, function (err, result) {
@@ -179,6 +206,40 @@ app.delete('/deleteSQLData', function(req, res) {
     res.send({'error': false});
   });
 });
+
+app.delete('/deleteS3Data', function(req, res) { 
+  this.res = res;   
+  clearBucket(s3, 'license-tool');
+  console.log("Delete All Items");
+});
+
+function uploadS3(fileName, licenseID, contentType) {  
+  const myBucket = 'license-tool/' + licenseID;  
+  const signedUrlExpireSeconds = 60 * 5
+  let self = this;
+  if(fileName == '' || licenseID == 0) return;
+  const url = s3.getSignedUrl('getObject', {
+      Bucket: myBucket,
+      Key: fileName,
+      Expires: signedUrlExpireSeconds
+  })  
+  console.log(fileName + "   " + licenseID);
+  fs.readFile(path.join(__dirname, '/uploads/' + fileName), function (err, data) {
+    if (err) { throw err; }
+    
+    var base64data = new Buffer(data, 'binary');          
+    s3.putObject({
+      Bucket: myBucket,
+      Key: fileName,
+      Body: base64data,
+      ContentType: contentType,
+      ACL: 'public-read'
+    },function (resp) {
+      self.res.send({"error":false, "file_name": fileName, "date": moment(new Date()).format("YYYY-MM-DD")});
+    });
+  
+  });
+}
 function getMaxID() {
   connectionWrite.query("SELECT MAX(license_id) as licenseID from licenses", function(err, result) {
     if (err) throw err;      
@@ -190,7 +251,7 @@ function getMaxID() {
 }
 
 function getNewRecords(maxID) {
-  var self = this;  
+  var self = this;    
   connectionRead.query("SELECT L.licenseID as license_id, L.userFullName, L.userEMail, L.userCompany, L.userRegisteredTo, L.validityPeriod, P.productName FROM licenses as L JOIN products as P on P.productid = L.productid where L.licenseID > " + maxID + " order by L.licenseID", function(err, result) {
     if (err) throw err; 
     var newRecords = [];
@@ -227,10 +288,12 @@ function getNewRecords(maxID) {
       });                  
       newRecords.push(record);
     })
-    if(newRecords.length == 0) {
+    
+    if(newRecords.length == 0) {      
       self.res.send({'error': false, 'numbers': 0});
+      console.log('New Records');
       return;
-    }
+    }    
     var sql = "INSERT INTO licenses (license_id, userFullName, userEMail, userCompany, userRegisteredTo, validityPeriod, productName, licenseType, issueDate, expireDate) VALUES ?";
     connectionWrite.query(sql, [newRecords], function (err, result) {      
       if (err) {
@@ -260,6 +323,51 @@ function fetchRecords() {
     self.res.header('Access-Control-Allow-Credentials', true);
     self.res.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, PUT, OPTIONS, HEAD');
     
+  });
+}
+
+function deleteObject (client, deleteParams) {
+  client.deleteObject(deleteParams, function (err, data) {
+      if (err) {
+          console.log("delete err " + deleteParams.Key);
+          self.res.send({'error': true});
+      } else {
+          console.log("deleted " + deleteParams.Key);
+      }
+  });
+}
+function deleteBucket (client, bucket) {
+  client.deleteBucket({Bucket: bucket}, function (err, data) {
+      if (err) {
+          console.log("error deleting bucket " + err);
+          self.res.send({'error': true});          
+      } else {
+          console.log("delete the bucket " + data);
+      }
+  });
+}
+function clearBucket (client, bucket) {
+  var self = this;
+  client.listObjects({Bucket: bucket}, function (err, data) {
+      if (err) {
+          console.log("error listing bucket objects "+err);
+          self.res.send({'error': true});
+          return;
+      }
+      var items = data.Contents;
+      for (var i = 0; i < items.length; i += 1) {
+          var deleteParams = {Bucket: bucket, Key: items[i].Key};
+          deleteObject(client, deleteParams);
+      }
+  });
+  let sql = "UPDATE licenses set invoices = " + null;
+  connectionWrite.query(sql, function (err, result) {
+    if (err) {
+      console.log(this.sql);
+      self.res.send({'error': true});
+      return;
+    }
+    self.res.send({'error': false});
   });
 }
 
