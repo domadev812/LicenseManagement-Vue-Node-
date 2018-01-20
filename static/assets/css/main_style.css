@@ -319,9 +319,12 @@ tr{
 #loading-modal{
   z-index: 99999 !important;
 }
-
+.invoice-content{
+  max-height: 80px;
+  overflow: auto;
+}
 .invoice-detail{
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .remove-invoice{
@@ -329,4 +332,8 @@ tr{
   cursor: pointer;
   font-size: 16px !important;
   margin-left: 30px;
+}
+
+.expiration-date .custom-checkbox{
+  padding-right: 0px !important;
 }

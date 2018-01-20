@@ -6,19 +6,32 @@
         <b-card v-b-toggle.collapse1 variant="primary" class = "filter-panel">Filter Options<i class="fa fa-angle-double-down filter-condition-arrow"></i></b-card >
         <b-collapse id="collapse1" class="filter-body">
           <div class = "row filter-row">
-            <div class = "col-md-3 col-sm-4">
+            <div class = "col-md-3 col-sm-3">
               <p>License Expiration Date Range </p>
-              <div class = "row">
-                <div class = "col-sm-8 col-md-6">
-                  <!-- <b-form-input  :type="'date'" v-model="startExpireDate"></b-form-input>                             -->
-                  <datepicker :format = "customFormatter" v-model = "startExpireDate"></datepicker>
-                </div>                
-                <div class = "col-sm-8 col-md-6">
-                  <datepicker :format = "customFormatter" v-model = "endExpireDate"></datepicker>  
+              <div class = "row expiration-date">
+                <div class = "col-sm-4 col-md-4 col-xs-3" style = "text-align: right;padding-right: 0;margin-top: 24px;">
+                  <b-form-checkbox
+                      v-model="useStartDate"
+                      value="accepted"
+                      unchecked-value="not_accepted">            
+                  </b-form-checkbox>
+                </div>
+                <div class = "col-sm-8 col-md-8 col-xs-9" style = "margin-top:20px;">                  
+                  <datepicker :format = "customFormatter" v-model = "startExpireDate" v-bind:disabled-picker="useStartDate == 'not_accepted' ? true:false"></datepicker>
+                </div>
+                <div class = "col-sm-4 col-md-4 col-xs-3" style = "text-align: right;padding-right: 0;margin-top: 24px;">
+                  <b-form-checkbox
+                      v-model="useEndDate"
+                      value="accepted"
+                      unchecked-value="not_accepted">                      
+                  </b-form-checkbox>
+                </div>                                
+                <div class = "col-sm-8 col-md-6" style = "margin-top:20px;">
+                  <datepicker :format = "customFormatter" v-model = "endExpireDate" v-bind:disabled-picker="useEndDate == 'not_accepted' ? true:false"></datepicker>  
                 </div>
               </div>
             </div> 
-            <div class = "col-md-9 col-sm-8">
+            <div class = "col-md-9 col-sm-9">
               <div class = "row">
                 <div class = "col-md-3 col-sm-6 col-product">
                   <p>PRODUCT: </p>
@@ -253,6 +266,8 @@ export default {
       new_customer: 'not_accepted',
       renewal_customer: 'not_accepted',
       lost_customer: 'not_accepted',
+      useStartDate: 'not_accepted',
+      useEndDate: 'not_accepted',
       minDeal:0,
       maxDeal:20000,               
       records: [],
@@ -326,33 +341,41 @@ export default {
     },
     initFilterComponents() {
       if(this.filterCondition == null) return;
-       this.bumblebee = this.filterCondition.products.indexOf("bumblebee") > -1 ? "accepted" : "not_accepted";
-       this.eggplant = this.filterCondition.products.indexOf("eggplant") > -1 ? "accepted" : "not_accepted";
-       this.dragonfly = this.filterCondition.products.indexOf("dragonfly") > -1 ? "accepted" : "not_accepted";
-       this.firefly = this.filterCondition.products.indexOf("firefly") > -1 ? "accepted" : "not_accepted";
-       this.pangolin = this.filterCondition.products.indexOf("pangolin") > -1 ? "accepted" : "not_accepted";
+        this.useStartDate = this.filterCondition.useStartDate ? "accepted" : "not_accepted";
+        this.useEndDate = this.filterCondition.useEndDate ? "accepted" : "not_accepted";
 
-       this.evaluation = this.filterCondition.licenseType.indexOf("evaluation") > -1 ? "accepted" : "not_accepted";
-       this.basic = this.filterCondition.licenseType.indexOf("basic") > -1 ? "accepted" : "not_accepted";
-       this.enterprise = this.filterCondition.licenseType.indexOf("enterprise") > -1 ? "accepted" : "not_accepted";
-       this.eggplant_type = this.filterCondition.licenseType.indexOf("eggplant") > -1 ? "accepted" : "not_accepted";
+        this.bumblebee = this.filterCondition.products.indexOf("bumblebee") > -1 ? "accepted" : "not_accepted";
+        this.eggplant = this.filterCondition.products.indexOf("eggplant") > -1 ? "accepted" : "not_accepted";
+        this.dragonfly = this.filterCondition.products.indexOf("dragonfly") > -1 ? "accepted" : "not_accepted";
+        this.firefly = this.filterCondition.products.indexOf("firefly") > -1 ? "accepted" : "not_accepted";
+        this.pangolin = this.filterCondition.products.indexOf("pangolin") > -1 ? "accepted" : "not_accepted";
 
-       this.new_customer = this.filterCondition.customerStatus.indexOf("new") > -1 ? "accepted" : "not_accepted";
-       this.renewal_customer = this.filterCondition.customerStatus.indexOf("renewal") > -1 ? "accepted" : "not_accepted";
-       this.lost_customer = this.filterCondition.customerStatus.indexOf("lost") > -1 ? "accepted" : "not_accepted";
-       
-       this.showArchived = this.filterCondition.archive ? "accepted" : "not_accepted";
-       this.minDeal = this.filterCondition.minDeal;
-       this.maxDeal = this.filterCondition.maxDeal;
-       this.startExpireDate = this.filterCondition.startExpireDate;
-       this.endExpireDate = this.filterCondition.endExpireDate;
+        this.evaluation = this.filterCondition.licenseType.indexOf("evaluation") > -1 ? "accepted" : "not_accepted";
+        this.basic = this.filterCondition.licenseType.indexOf("basic") > -1 ? "accepted" : "not_accepted";
+        this.enterprise = this.filterCondition.licenseType.indexOf("enterprise") > -1 ? "accepted" : "not_accepted";
+        this.eggplant_type = this.filterCondition.licenseType.indexOf("eggplant") > -1 ? "accepted" : "not_accepted";
+
+        this.new_customer = this.filterCondition.customerStatus.indexOf("new") > -1 ? "accepted" : "not_accepted";
+        this.renewal_customer = this.filterCondition.customerStatus.indexOf("renewal") > -1 ? "accepted" : "not_accepted";
+        this.lost_customer = this.filterCondition.customerStatus.indexOf("lost") > -1 ? "accepted" : "not_accepted";
+        
+        this.showArchived = this.filterCondition.archive ? "accepted" : "not_accepted";
+        this.minDeal = this.filterCondition.minDeal;
+        this.maxDeal = this.filterCondition.maxDeal;
+        this.startExpireDate = this.filterCondition.startExpireDate;
+        this.endExpireDate = this.filterCondition.endExpireDate;
     },
     filterRecords: function() {
       let products = new Array();
       let licenseType = new Array();
       let customerStatus = new Array();
       let archive = true;
+      let useStartDate = true;
+      let useEndDate = true;
       let filterJSON = {};
+
+      useStartDate = this.useStartDate == "accepted" ? true : false;
+      useEndDate = this.useEndDate == "accepted" ? true : false;
 
       this.bumblebee == "accepted" ? products.push('bumblebee') : "";      
       this.eggplant == "accepted" ? products.push('eggplant') : "";
@@ -370,10 +393,17 @@ export default {
       this.lost_customer == "accepted" ? customerStatus.push('lost') : "";  
 
       archive = this.showArchived == "accepted" ? true : false;
+
+      filterJSON.useStartDate = useStartDate;
+      filterJSON.useEndDate = useEndDate;
+      filterJSON.startExpireDate = this.startExpireDate;
+      filterJSON.endExpireDate = this.endExpireDate;
+
       filterJSON.products = products;
       filterJSON.licenseType = licenseType;
       filterJSON.customerStatus = customerStatus;
       filterJSON.archive = archive;
+
       if(this.minDeal != '')
         filterJSON.minDeal = this.minDeal;
       else
@@ -382,11 +412,8 @@ export default {
       if(this.maxDeal != '')
         filterJSON.maxDeal = this.maxDeal;
       else
-        filterJSON.maxDeal = 0;
-      
-      filterJSON.startExpireDate = this.startExpireDate;
-      filterJSON.endExpireDate = this.endExpireDate;
-
+        filterJSON.maxDeal = 0;            
+        
       this.$store.dispatch('setFilterCondition', filterJSON)
       this.fetchRecords(filterJSON, this.sortCondition);
     },

@@ -100,8 +100,13 @@ app.get('/getRecords/:filterCondition/:sortCondition', function(req, res) {
   let filter = JSON.parse(req.params.filterCondition);  
   let sort = JSON.parse(req.params.sortCondition);    
   let sql = "SELECT * FROM licenses";
+  console.log(filter);
   if(filter != null) {
     sql += " where ";  
+    if(filter.useStartDate)
+      sql += "expireDate >= '" + filter.startExpireDate + "' and ";
+    if(filter.useEndDate)
+      sql += "expireDate <= '" + filter.endExpireDate + "' and ";  
     if(filter.products.length > 0)
       sql += "productName in ('" + filter.products.join("','") + "') and ";  
     if(filter.licenseType.length > 0)
@@ -110,10 +115,12 @@ app.get('/getRecords/:filterCondition/:sortCondition', function(req, res) {
       sql += "customerStatus in ('" + filter.customerStatus.join("','") + "') and ";
     if(!filter.archive)
       sql += "licenseState = 'active' and ";
-    sql += "expireDate >= '" + filter.startExpireDate + "' and expireDate <= '" + filter.endExpireDate + "' and ";
+
     sql += "dealValue >= " + filter.minDeal + " and dealValue <= " + filter.maxDeal;
   }  
   sql += " ORDER BY " + sort.field + " " + sort.order;  
+  console.log(sql);
+
   connectionWrite.query(sql, function(err, result) {
     if(err) {      
       console.log("Error: " + this.sql);
@@ -125,6 +132,7 @@ app.get('/getRecords/:filterCondition/:sortCondition', function(req, res) {
       item.accountsPayable = item.accountsPayable != null ? item.accountsPayable.toString('binary') : "";
       item.dealNotes = item.dealNotes != null ? item.dealNotes.toString('binary') : "";
       item.importantNotes = item.importantNotes != null ? item.importantNotes.toString('binary') : "";      
+      item.invoices = item.invoices != null ? item.invoices.toString('binary') : "";      
       item.issueDate = moment(item.issueDate).format("YYYY-MM-DD");
       item.expireDate = expireDate.format("YYYY-MM-DD");
       if(item.updateDate != null && item.updateDate != '')

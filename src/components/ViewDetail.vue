@@ -149,8 +149,10 @@
         <div class = "content-panel">
           <div class = "row sub-title">Invoices</div>
             <div class = "row detail-panel">
-              <div class = "col-md-12 invoice-detail" v-for="(item, index) in this.invoiceList">{{item.date}}: {{item.file_name}}<i class = "fa fa-remove remove-invoice" @click="deleteInvoice(index)" v-if = "invoiceDeleteFlag"></i></div>              
-              <div class = "col-md-12" style = "bottom: 0px;position: absolute;">
+              <div class = "col-md-12 invoice-content">
+                <div class = "invoice-detail" v-for="(item, index) in this.invoiceList"><a href = "#" @click = "invoiceURL(item.file_name)">{{item.date}}: {{item.file_name}}</a><i class = "fa fa-remove remove-invoice" @click="deleteInvoice(index)" v-if = "invoiceDeleteFlag"></i></div>              
+              </div>              
+              <div class = "col-md-12" style = "bottom: 10px;position: absolute;">
                 <b-form-file id="upload_file" v-model="file" class = "file-chooser editable" style = "width: 60% !important; float:left;"></b-form-file>
                 <button type="button" class="btn btn-success btn-small form-group editable invoice-add-button" @click="uploadInvoices()">Add</button>              
               </div>
@@ -344,6 +346,9 @@ export default {
     },
     deleteInvoice(index) {
       this.invoiceList.splice(index, 1);
+    },
+    invoiceURL(fileName) {
+      window.open("https://s3.amazonaws.com/license-tool/" + this.selectedRecord.license_id + "/" + fileName);
     },
     saveRecord() {
       this.setEditFields(false);
